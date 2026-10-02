@@ -61,13 +61,13 @@ namespace KyUc
             //                                   tên     màu                              HP Công Thủ Crit Tốc Né Luck kháng
             if (party.Length > 0 && party[0] == null)
                 party[0] = CharacterData.Create("Vy", new Color(0.95f, 0.45f, 0.45f), 22, 4, 2, 10, 12, 10, 3, 0f,
-                    "Hủy ý định", SkillType.CancelIntent, 0f);
-            if (party.Length > 1 && party[1] == null)
+                    "Phá đòn", SkillType.CancelIntent, 0f, "Kiểm soát · Phá đòn");
+            if (party.Length > 1 && party[1] == null) // luật đọc văn tự chưa có trong GDD: tạm vẫn là đòn mạnh x2
                 party[1] = CharacterData.Create("Tuấn", new Color(0.85f, 0.2f, 0.2f), 26, 7, 2, 15, 9, 5, 2, 0f,
-                    "Đòn mạnh", SkillType.PowerStrike, 2f);
+                    "Đọc văn tự", SkillType.PowerStrike, 2f, "Sát thương · Đọc văn tự");
             if (party.Length > 2 && party[2] == null)
                 party[2] = CharacterData.Create("Khoa", new Color(0.65f, 0.15f, 0.15f), 32, 4, 5, 5, 6, 0, 1, 0.25f,
-                    "Che chắn", SkillType.Shield, 8f);
+                    "Che chắn", SkillType.Shield, 8f, "Đỡ đòn · Kháng Âm khí");
 
             // Hình nhân vật: Assets/Resources/Characters/<tên>.png
             foreach (var d in party)
@@ -1183,7 +1183,9 @@ namespace KyUc
 
                 float tx = r.x + 80, tw = r.width - 92;
                 ShadowLabel(new Rect(tx, r.y + 8, tw, 24), a.Name, nameStyle);
-                GUI.Label(new Rect(tx, r.y + 11, tw, 20), "Tốc " + a.Speed + " · Crit " + a.Crit + "%", rightSmallStyle);
+                string role = a.CharData.role;
+                GUI.Label(new Rect(tx, r.y + 11, tw, 20), string.IsNullOrEmpty(role) ? "Tốc " + a.Speed + " · Crit " + a.Crit + "%" : role,
+                    string.IsNullOrEmpty(role) ? rightSmallStyle : roleStyle);
 
                 float hpT = (float)a.HP / a.MaxHP;
                 bool low = a.IsAlive && hpT < 0.3f && Mathf.Repeat(Time.time, 0.8f) < 0.4f; // máu thấp: nháy
@@ -1534,7 +1536,7 @@ namespace KyUc
 
         // ---------- Vẽ ----------
 
-        GUIStyle smallCenter, intentDimStyle, menuSelStyle, menuDisabledSmall, barTextStyle, bigNumStyle, centerBigStyle, descCenterStyle, chipStyle;
+        GUIStyle smallCenter, intentDimStyle, menuSelStyle, menuDisabledSmall, barTextStyle, bigNumStyle, centerBigStyle, descCenterStyle, chipStyle, roleStyle;
 
         void EnsureStyles()
         {
@@ -1576,6 +1578,8 @@ namespace KyUc
             barTextStyle = new GUIStyle(GUI.skin.label) { fontSize = 13, fontStyle = FontStyle.Bold, alignment = TextAnchor.UpperRight };
             barTextStyle.normal.textColor = Cream;
             chipStyle = new GUIStyle(GUI.skin.label) { fontSize = 12, fontStyle = FontStyle.Bold, wordWrap = false };
+            roleStyle = new GUIStyle(rightSmallStyle) { fontStyle = FontStyle.Bold };
+            roleStyle.normal.textColor = new Color(0.86f, 0.74f, 0.45f);
             bigStyle = new GUIStyle(GUI.skin.label) { fontSize = 48, fontStyle = FontStyle.Bold, alignment = TextAnchor.MiddleCenter };
             bigNumStyle = new GUIStyle(GUI.skin.label) { fontSize = 24, fontStyle = FontStyle.Bold, alignment = TextAnchor.UpperCenter };
             bigNumStyle.normal.textColor = Gold;

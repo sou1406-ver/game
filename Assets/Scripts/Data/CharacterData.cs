@@ -13,6 +13,7 @@ namespace KyUc
     public class CharacterData : ScriptableObject
     {
         public string displayName = "Nhân vật";
+        public string role = "";   // vai trong trận, hiện trên thẻ (GDD mục Nhân vật), ví dụ "Kiểm soát · Phá đòn"
         public Color color = new Color(0.85f, 0.25f, 0.25f);
         public Texture2D sprite;   // để trống thì vẽ ô vuông màu
         public Texture2D portrait; // chân dung 48x48 cạnh menu lệnh, sau này dùng cho hội thoại
@@ -44,10 +45,11 @@ namespace KyUc
         }
 
         public static CharacterData Create(string name, Color color, int hp, int atk, int def, int crit, int speed,
-            int dodge, int luck, float resist, string skillName, SkillType skill, float power)
+            int dodge, int luck, float resist, string skillName, SkillType skill, float power, string role = "")
         {
             var d = CreateInstance<CharacterData>();
             d.displayName = name;
+            d.role = role;
             d.color = color;
             d.maxHP = hp;
             d.attack = atk;
