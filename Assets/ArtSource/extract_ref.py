@@ -257,6 +257,91 @@ def build_enemies():
     return out
 
 
+# ---------- Sprite sheet nền magenta tạo bằng AI (Docs/PROMPT_ART.md) ----------
+
+def magenta_cut(img):
+    """Xoá nền magenta và viền pha hồng ở mép, chỉ giữ khối hình chính, thu gọn sát hình."""
+    out = img.convert("RGBA")
+    px = out.load()
+    for y in range(out.height):
+        for x in range(out.width):
+            r, g, b, a = px[x, y]
+            pink = min(r, b) - g  # độ "magenta"
+            if pink > 90 and abs(r - b) < 90:
+                px[x, y] = (0, 0, 0, 0)
+            elif pink > 40 and abs(r - b) < 90:  # viền pha hồng: khử màu hồng
+                px[x, y] = (min(r, g + 30), g, min(b, g + 30), 255)
+    keep_main(out)
+    bbox = out.getbbox()
+    return out.crop(bbox) if bbox else out
+
+
+def sheet_cells(path, cols, rows, inset=8):
+    """Chia ảnh thành lưới cols x rows, lùi vào mỗi ô `inset` pixel để bỏ đường kẻ giữa ô."""
+    img = Image.open(path).convert("RGB")
+    cw, ch = img.width / cols, img.height / rows
+    cells = []
+    for r in range(rows):
+        for c in range(cols):
+            box = (int(c * cw + inset), int(r * ch + inset), int((c + 1) * cw - inset), int((r + 1) * ch - inset))
+            cells.append(magenta_cut(img.crop(box)))
+    return cells
+
+
+BATTLE_H = 56   # chiều cao người trong trận (pixel trận)
+BATTLE_POSES = ["0", "1", "atk", "hurt"]  # 4 ô của prompt B: thủ thế, thở, đánh, trúng đòn
+
+
+def build_battle_sheets():
+    """reference/<tên>_battle.png (lưới 2x2) → Resources/Battle/<tên>_0, _1, _atk, _hurt.png"""
+    out = []
+    for f in sorted(os.listdir(REF)):
+        if not f.endswith("_battle.png"):
+            continue
+        name = f[:-len("_battle.png")]
+        cells = sheet_cells(os.path.join(REF, f), 2, 2)
+        # cùng một tỉ lệ thu cho cả 4 ô (theo ô thủ thế) để người không to nhỏ khác nhau
+        scale = BATTLE_H / cells[0].height
+        frames = [pixelize(c, max(8, round(c.height * scale)), colors=32) for c in cells]
+        cw = max(fr.width for fr in frames) + 2
+        ch = max(fr.height for fr in frames) + 1
+        for pose, fr in zip(BATTLE_POSES, frames):
+            canvas(fr, cw, ch).save(os.path.join(RES, "Battle", "%s_%s.png" % (name, pose)))
+        out.append((name, [canvas(fr, cw, ch) for fr in frames]))
+    return out
+
+
+# reference/<tên>_walk.png: AI không luôn ra đúng lưới xin, nên khai báo từng bảng:
+# cols, rows; mỗi hướng là 3 ô (hàng, cột) cho khung 0 (đứng), 1, 2 (bước); side_faces = hướng của hàng nhìn ngang.
+WALK_SHEETS = {
+    "khoa": dict(cols=6, rows=3, down=[(0, 0), (0, 1), (0, 3)], side=[(1, 0), (1, 2), (1, 4)], side_faces="right",
+                 up=[(2, 0), (2, 1), (2, 3)]),
+}
+
+
+def build_walk_sheets():
+    out_dir = os.path.join(RES, "Walk")
+    rows_out = []
+    for name, spec in WALK_SHEETS.items():
+        path = os.path.join(REF, name + "_walk.png")
+        if not os.path.exists(path):
+            continue
+        cells = sheet_cells(path, spec["cols"], spec["rows"], inset=6)
+        cell = lambda rc: cells[rc[0] * spec["cols"] + rc[1]]
+        scale = WALK_H / cell(spec["down"][0]).height  # cùng tỉ lệ cho mọi khung
+        def frames(key):
+            return [canvas(pixelize(cell(rc), max(8, round(cell(rc).height * scale))), WALK_CW, WALK_CH) for rc in spec[key]]
+        down, up, side = frames("down"), frames("up"), frames("side")
+        left = [mirror(f) for f in side] if spec["side_faces"] == "right" else side
+        for i in range(3):
+            down[i].save(os.path.join(out_dir, "%s_down_%d.png" % (name, i)))
+            up[i].save(os.path.join(out_dir, "%s_up_%d.png" % (name, i)))
+            left[i].save(os.path.join(out_dir, "%s_left_%d.png" % (name, i)))
+            mirror(left[i]).save(os.path.join(out_dir, "%s_right_%d.png" % (name, i)))
+        rows_out.append(down + up + left)
+    return rows_out
+
+
 def preview(walk_rows, portraits, enemies):
     sc = 5
     W = max(len(r) for r in walk_rows) * (WALK_CW * sc + 6) + 20
@@ -279,7 +364,21 @@ def preview(walk_rows, portraits, enemies):
 
 if __name__ == "__main__":
     w = build_walk()
+    w += build_walk_sheets()  # bảng đi lại mới ghi đè bản cắt từ ảnh tham chiếu cũ
     p = build_portraits()
     e = build_enemies()
     preview(w, p, e)
+    b = build_battle_sheets()
+    if b:
+        sc = 5
+        W_ = sum(max(f.width for f in fr) * sc * 4 + 40 for _, fr in b) + 20
+        H_ = max(fr[0].height for _, fr in b) * sc + 20
+        img = Image.new("RGBA", (W_, H_), (40, 40, 56, 255))
+        x = 10
+        for _, frames in b:
+            for fr in frames:
+                img.alpha_composite(fr.resize((fr.width * sc, fr.height * sc), Image.NEAREST), (x, 10))
+                x += fr.width * sc + 10
+            x += 30
+        img.save(os.path.join(PREVIEW, "_battle_sheets_preview.png"))
     print("done")

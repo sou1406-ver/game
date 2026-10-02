@@ -727,17 +727,21 @@ namespace KyUc
         {
             fallback = false;
             string key = SpriteKey(c.Name);
+            var an = AnimOf(c);
+            bool hurt = !c.IsAlive || Time.time - an.hitT < HitTime;
+            bool atk = !hurt && Time.time - an.actT < ActTime;
+            string idle = (((int)(Time.time * 1.6f)) + (c.IsAlly ? ctx.Allies.IndexOf(c) : ctx.Enemies.IndexOf(c))) % 2 == 0 ? "0" : "1";
+            // Sprite trận riêng: Battle/<tên>_0, _1 (thở), _atk, _hurt (extract_ref.py, từ ảnh <tên>_battle.png)
+            var b = Tex("Battle/" + key + "_" + (hurt ? "hurt" : atk ? "atk" : idle));
+            if (b == null && (hurt || atk)) b = Tex("Battle/" + key + "_0");
+            if (b != null) return b;
             if (c.IsAlly)
             {
-                var an = AnimOf(c);
-                string pose = !c.IsAlive || Time.time - an.hitT < HitTime ? "hurt" : Time.time - an.actT < ActTime ? "atk" : "0";
-                var t = Tex("Walk/" + key + "_right_" + pose);
+                var t = Tex("Walk/" + key + "_right_" + (hurt ? "hurt" : atk ? "atk" : "0"));
                 if (t != null) return t;
                 fallback = true;
                 return c.CharData.sprite;
             }
-            var e = Tex("Battle/" + key + "_" + ((int)(Time.time * 2f) + ctx.Enemies.IndexOf(c)) % 2);
-            if (e != null) return e;
             fallback = true;
             return c.EnemyData.sprite;
         }
