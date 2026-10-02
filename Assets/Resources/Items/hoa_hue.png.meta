@@ -1,10 +1,10 @@
 fileFormatVersion: 2
-guid: c2c3a669a43d0a5408894faec6c4a24f
+guid: 1cef0969621459045b3ec452439c60ea
 TextureImporter:
   internalIDToNameTable:
   - first:
-      213: -2996902039771716319
-    second: _portraits_preview_0
+      213: -5291225860881931002
+    second: hoa_hue_0
   externalObjects: {}
   serializedVersion: 13
   mipmaps:
@@ -37,7 +37,7 @@ TextureImporter:
   maxTextureSize: 2048
   textureSettings:
     serializedVersion: 2
-    filterMode: 1
+    filterMode: 0
     aniso: 1
     mipBias: 0
     wrapU: 1
@@ -75,7 +75,7 @@ TextureImporter:
     maxTextureSize: 2048
     resizeAlgorithm: 0
     textureFormat: -1
-    textureCompression: 1
+    textureCompression: 0
     compressionQuality: 50
     crunchedCompression: 0
     allowsAlphaSplitting: 0
@@ -100,13 +100,13 @@ TextureImporter:
     serializedVersion: 2
     sprites:
     - serializedVersion: 2
-      name: _portraits_preview_0
+      name: hoa_hue_0
       rect:
         serializedVersion: 2
-        x: 0
+        x: 6
         y: 0
-        width: 1296
-        height: 588
+        width: 13
+        height: 24
       alignment: 0
       pivot: {x: 0, y: 0}
       border: {x: 0, y: 0, z: 0, w: 0}
@@ -115,8 +115,8 @@ TextureImporter:
       physicsShape: []
       tessellationDetail: -1
       bones: []
-      spriteID: 12563cc197dd866d0800000000000000
-      internalID: -2996902039771716319
+      spriteID: 605a5c71d1ac196b0800000000000000
+      internalID: -5291225860881931002
       vertices: []
       indices: 
       edges: []
@@ -135,7 +135,7 @@ TextureImporter:
     spriteCustomMetadata:
       entries: []
     nameFileIdTable:
-      _portraits_preview_0: -2996902039771716319
+      hoa_hue_0: -5291225860881931002
   mipmapLimitGroupName: 
   pSDRemoveMatte: 0
   userData: 

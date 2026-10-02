@@ -986,7 +986,7 @@ namespace KyUc
                 DrawSquare(r, c.Color);
                 return;
             }
-            float frac = c.IsAlly ? 12f / 32f : 0.6f;
+            float frac = c.IsAlly ? 15f / 36f : 0.6f;
             var uv = new Rect(0, 1f - frac, 1, frac);
             float aspect = t.width / (t.height * frac);
             float hh = r.height, ww = hh * aspect;

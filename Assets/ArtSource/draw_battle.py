@@ -1,4 +1,4 @@
-"""Đồ họa trận nhìn ngang: ma quay trái (cùng độ to pixel với sprite đi 16x24), nền đêm Điện Thoải phủ, icon.
+"""Đồ họa trận: nền đêm Điện Thoải phủ và icon (ma lấy từ ảnh tham chiếu bằng extract_ref.py).
 Chạy: python draw_battle.py → Assets/Resources/Battle/
   ma_<tên>_0/1.png (2 khung lơ lửng) · backdrop.png 512x288 · icon_*.png"""
 from PIL import Image, ImageDraw
@@ -66,169 +66,6 @@ class S:
     def save(self, name):
         self.img.save(os.path.join(OUT, name + ".png"))
         return self.img
-
-
-# ---------- Ma (quay trái) ----------
-
-def blob(s, cx, cy, rx, ry, base, light=1.18, dark=0.7, tones=4):
-    """Elip đổ bóng theo hướng sáng trên-trái, chia bậc màu rõ (kiểu pixel art)."""
-    for y in range(int(cy - ry - 1), int(cy + ry + 2)):
-        for x in range(int(cx - rx - 1), int(cx + rx + 2)):
-            dx, dy = (x - cx) / (rx + 0.4), (y - cy) / (ry + 0.4)
-            if dx * dx + dy * dy <= 1:
-                t = (dx + dy * 1.2) * 0.5 + 0.5  # 0 = sáng, 1 = tối
-                step = min(tones - 1, int(t * tones))
-                f = light + (dark - light) * step / (tones - 1)
-                s.p(x, y, shade(base, f))
-
-
-def thick_line(s, x0, y0, x1, y1, c, w=1, c2=None):
-    n = int(max(abs(x1 - x0), abs(y1 - y0))) + 1
-    for i in range(n + 1):
-        t = i / max(1, n)
-        x, y = x0 + (x1 - x0) * t, y0 + (y1 - y0) * t
-        for k in range(w):
-            s.p(x, y + k, c if k == 0 or c2 is None else c2)
-
-
-def ma_doi(f):
-    """Ma đói (quay trái): đầu to hói, miệng há răng lởm chởm, xương sườn lộ, bụng ỏng, tay chân khẳng khiu."""
-    s = S(36, 44)
-    skin = (122, 142, 100)
-    dk, belly, bone = shade(skin, 0.68), (156, 170, 128), (226, 220, 196)
-    y = f
-    # chân gập, bàn chân to
-    thick_line(s, 20, 30 + y, 16, 36, dk, 2)
-    thick_line(s, 16, 36, 18, 41, dk, 2)
-    s.rect(13, 41, 19, 42, dk)
-    thick_line(s, 24, 30 + y, 27, 36, shade(dk, 0.85), 2)
-    thick_line(s, 27, 36, 25, 41, shade(dk, 0.85), 2)
-    s.rect(23, 41, 29, 42, shade(dk, 0.85))
-    # tay sau
-    thick_line(s, 22, 17 + y, 28, 24 + y, shade(dk, 0.85), 2)
-    # thân gầy + bụng ỏng
-    blob(s, 22, 20 + y, 5, 5, skin)
-    blob(s, 21, 27 + y, 8, 7, skin)
-    blob(s, 19, 28 + y, 4, 4, belly, 1.1, 0.9, 2)
-    for k in range(3):  # xương sườn
-        for x in range(18, 25):
-            if (x + k) % 2 == 0:
-                s.p(x, 17 + k * 2 + y, dk)
-    s.rect(15, 32 + y, 27, 34 + y, (170, 160, 130))  # khố rách
-    for x in range(15, 28, 3):
-        s.p(x, 35 + y, (150, 140, 110))
-    # đầu to
-    blob(s, 15, 10 + y, 10, 9, skin)
-    s.p(24, 6 + y, dk); s.p(25, 7 + y, dk)  # tai nhọn
-    s.p(25, 6 + y, skin)
-    for x, h in ((13, 3), (17, 2), (20, 3)):  # vài sợi tóc lơ thơ
-        for k in range(h):
-            s.p(x + k // 2, 1 - k + y + 2, (40, 44, 36))
-    s.rect(8, 6 + y, 12, 8 + y, (24, 20, 20))  # hốc mắt
-    s.p(9, 7 + y, (250, 220, 70)); s.p(10, 7 + y, (200, 160, 40))
-    s.rect(4, 11 + y, 14, 17 + y, (74, 18, 24))  # miệng há
-    s.rect(5, 15 + y, 13, 17 + y, (110, 30, 36))
-    for x in range(5, 14, 2):  # răng
-        s.p(x, 11 + y, bone); s.p(x, 12 + y, bone)
-        s.p(x + 1, 17 + y, bone); s.p(x + 1, 16 + y, bone)
-    s.p(3, 10 + y, skin)
-    # tay trước vươn ra, móng dài
-    ay = 22 + y + (1 if f else -1)
-    thick_line(s, 18, 18 + y, 9, ay, skin, 2, dk)
-    thick_line(s, 9, ay, 3, ay - 2, skin, 2, dk)
-    for k in range(3):
-        s.p(1, ay - 3 + k * 2, bone)
-        s.p(2, ay - 3 + k * 2, bone)
-    s.outline()
-    return s
-
-
-def ma_nuoc(f):
-    """Ma nước (quay trái): hồn nữ tóc đen dài ướt, váy trắng, lơ lửng, tay tái vươn ra, chân tan thành sương."""
-    s = S(34, 48)
-    hair, hair_dk = (18, 22, 30), (34, 42, 56)
-    skin = (214, 222, 226)
-    dress, dress_dk = (226, 232, 236), (164, 178, 192)
-    y = -f
-    # váy trắng loe, rách gấu
-    for yy in range(18, 44):
-        t = (yy - 18) / 26.0
-        half = 5 + t * 6
-        cx = 18 + t * 1.5
-        for x in range(int(cx - half), int(cx + half) + 1):
-            c = dress if x < cx + half * 0.2 else dress_dk
-            if (x * 3 + yy) % 7 == 0:
-                c = shade(c, 0.92)
-            a = 255 if yy < 36 else int(255 * (1 - (yy - 36) / 9.0))  # tan dần
-            if yy >= 40 and (x + yy) % 3 == 0:
-                continue
-            s.p(x, yy + y, c, max(40, a))
-    # tóc dài trùm lưng
-    for yy in range(4, 38):
-        t = (yy - 4) / 34.0
-        x0 = 15 + int(t * 3)
-        x1 = 26 + int(math.sin(yy * 0.4 + f) * 1.5)
-        for x in range(x0, x1):
-            s.p(x, yy + y, hair if (x + yy // 2) % 4 else hair_dk)
-    blob(s, 17, 9 + y, 7, 6, hair, 1.4, 0.8, 3)
-    # mặt nghiêng tái, tóc mái rủ che nửa
-    blob(s, 12, 12 + y, 4, 5, skin, 1.0, 0.82, 3)
-    s.p(8, 13 + y, skin)
-    s.p(10, 11 + y, (20, 16, 24)); s.p(10, 12 + y, (190, 30, 34))  # mắt
-    s.rect(10, 15 + y, 11, 15 + y, (70, 40, 50))
-    for x in (13, 14, 16):
-        for k in range(8 + (x % 3) * 2):
-            s.p(x, 6 + k + y, hair)
-    # tay tái vươn ra
-    thick_line(s, 15, 21 + y, 7, 25 + y, skin, 2, shade(skin, 0.82))
-    thick_line(s, 7, 25 + y, 2, 24 + y, skin, 1)
-    for k in range(3):
-        s.p(1, 23 + k + y, skin)
-    # giọt nước
-    for x, yy in ((5, 29), (22, 40), (12, 34), (27, 30)):
-        s.p(x, yy + y + f, (140, 200, 230), 200)
-    s.outline()
-    for yy in range(36, 48):  # viền sương cũng mờ dần
-        for x in range(34):
-            r, g, b, a = s.px[x, yy]
-            if a and (r, g, b) == OUTL:
-                s.px[x, yy] = (r, g, b, int(a * max(0.0, 1 - (yy - 36) / 8.0)))
-    return s
-
-
-def ma_nhen(f):
-    """Ma nhện (quay trái): bụng nhện lớn hoa văn đỏ, đầu là mặt người trắng bệch tóc rủ, tám chân gập."""
-    s = S(46, 36)
-    body, leg, leg_hl = (54, 44, 64), (92, 76, 110), (140, 122, 160)
-    y = f
-    legs = [(14, 6, 1), (18, 12, 5), (26, 34, 40), (30, 39, 45)]
-    for i, (bx, kx, fx) in enumerate(legs):  # chân sau (tối) vẽ trước
-        lift = 2 if (i + f) % 2 else 0
-        thick_line(s, bx + 2, 16 + y, kx + 2, 5 + y + lift, shade(leg, 0.62), 2)
-        thick_line(s, kx + 2, 5 + y + lift, fx + 1, 32, shade(leg, 0.62), 2)
-    blob(s, 30, 15 + y, 12, 9, body)  # bụng
-    for (x, yy) in ((28, 12), (29, 13), (30, 14), (31, 13), (32, 12), (30, 15), (30, 16), (29, 17), (31, 17)):
-        s.p(x, yy + y, (190, 36, 40))  # hoa văn đỏ
-    blob(s, 17, 17 + y, 6, 5, shade(body, 1.1))  # ngực
-    for i, (bx, kx, fx) in enumerate(legs):  # chân trước
-        lift = 0 if (i + f) % 2 else 2
-        thick_line(s, bx, 18 + y, kx, 7 + y + lift, leg_hl, 2, leg)
-        thick_line(s, kx, 7 + y + lift, fx, 33, leg_hl, 2, leg)
-        s.rect(kx - 1, 6 + y + lift, kx + 1, 8 + y + lift, leg_hl)  # khớp gối
-        s.p(fx, 34, shade(leg, 0.6))
-    # mặt người + tóc rủ
-    blob(s, 9, 19 + y, 6, 6, (214, 210, 200), 1.05, 0.8, 3)
-    for x in range(4, 16):
-        for k in range(2 + (x * 7) % 4):
-            s.p(x, 13 + k + y, (16, 14, 20))
-    s.p(6, 19 + y, (20, 16, 20)); s.p(7, 19 + y, (200, 30, 34))
-    s.p(10, 19 + y, (20, 16, 20)); s.p(11, 19 + y, (200, 30, 34))
-    s.rect(7, 22 + y, 10, 23 + y, (60, 18, 24))
-    s.p(8, 22 + y, (220, 214, 200))
-    s.p(3, 20 + y, (214, 210, 200))
-    thick_line(s, 9, 25 + y, 9, 34, (220, 222, 232), 1)  # sợi tơ
-    s.outline()
-    return s
 
 
 # ---------- Nền trận: đêm ở Điện Thoải phủ ----------
@@ -391,10 +228,6 @@ def icons():
 
 
 if __name__ == "__main__":
-    sheet = []
-    for name, fn in (("ma_doi", ma_doi), ("ma_nuoc", ma_nuoc), ("ma_nhen", ma_nhen)):
-        for f in (0, 1):
-            sheet.append(fn(f).save("%s_%d" % (name, f)))
     bd = backdrop()
     icons()
     # xem trước đúng bố cục trong game ở 1920x1080: khung 384x216, mỗi pixel x5 (khớp BattleController.SlotPos)
@@ -409,9 +242,13 @@ if __name__ == "__main__":
         back = 2 - i
         x, y = cx - 42 - back * 30, gy + (back % 2) * 8
         if os.path.exists(p):
-            im2 = Image.open(p); view.alpha_composite(im2, (x - im2.width // 2, y - im2.height + 1))
-    for i, im in enumerate(sheet[::2][:2]):
-        x, y = cx + 42 + i * 36, gy + (i % 2) * 8
-        view.alpha_composite(im, (x - im.width // 2, y - im.height + 1))
+            im2 = Image.open(p)
+            view.alpha_composite(im2, (x - im2.width // 2, y - im2.height + 1))
+    for i, n in enumerate(("ma_doi", "ma_nuoc")):  # ma lấy từ extract_ref.py
+        p = os.path.join(OUT, n + "_0.png")
+        x, y = cx + 48 + i * 46, gy + (i % 2) * 8
+        if os.path.exists(p):
+            im = Image.open(p)
+            view.alpha_composite(im, (x - im.width // 2, y - im.height + 1))
     view.resize((vw * 5, vh * 5), Image.NEAREST).save(os.path.join(PREVIEW, "_battle_preview.png"))
     print("done →", OUT)
