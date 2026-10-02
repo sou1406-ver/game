@@ -1,16 +1,25 @@
-"""Icon 16x16 cho kỷ vật, đồ lễ và đồ chiến đấu. Chạy: python3 draw_items.py"""
+"""Icon 24x24 cho kỷ vật, đồ lễ, đồ chiến đấu và nguyên liệu. Đổ bóng theo bậc, viền màu.
+Chạy: python draw_items.py → ghi thẳng vào Assets/Resources/Items/<tên bỏ dấu>.png"""
 from PIL import Image, ImageDraw, ImageFont
+import math
 import os
 
-N = 16
-ROOT = os.path.dirname(os.path.abspath(__file__))
-OUT = os.path.join(ROOT, "sprites", "items")
+N = 24
+HERE = os.path.dirname(os.path.abspath(__file__))
+PARENT = os.path.dirname(HERE)
+ASSETS = PARENT if os.path.basename(PARENT) == "Assets" else os.path.join(PARENT, "Assets")
+OUT = os.path.join(ASSETS, "Resources", "Items")
+PREVIEW = os.path.join(HERE, "sprites")
 os.makedirs(OUT, exist_ok=True)
-OUTLINE = (30, 22, 26, 255)
+os.makedirs(PREVIEW, exist_ok=True)
 
 
 def shade(c, f):
-    return (max(0, min(255, int(c[0] * f))), max(0, min(255, int(c[1] * f))), max(0, min(255, int(c[2] * f))), 255)
+    return tuple(max(0, min(255, int(v * f))) for v in c[:3])
+
+
+def mix(a, b, t):
+    return tuple(int(a[i] + (b[i] - a[i]) * t) for i in range(3))
 
 
 class I:
@@ -18,247 +27,361 @@ class I:
         self.img = Image.new("RGBA", (N, N), (0, 0, 0, 0))
         self.px = self.img.load()
 
-    def p(self, x, y, c):
+    def p(self, x, y, c, a=255):
+        x, y = int(round(x)), int(round(y))
         if 0 <= x < N and 0 <= y < N:
-            self.px[x, y] = c
+            self.px[x, y] = tuple(c[:3]) + (a,)
 
     def rect(self, x0, y0, x1, y1, c):
         for y in range(y0, y1 + 1):
             for x in range(x0, x1 + 1):
                 self.p(x, y, c)
 
-    def ellipse(self, cx, cy, rx, ry, c):
-        for y in range(N):
-            for x in range(N):
-                if ((x - cx) / (rx + 0.5)) ** 2 + ((y - cy) / (ry + 0.5)) ** 2 <= 1:
-                    self.p(x, y, c)
+    def blob(self, cx, cy, rx, ry, base, light=1.2, dark=0.68, tones=4):
+        for y in range(int(cy - ry - 1), int(cy + ry + 2)):
+            for x in range(int(cx - rx - 1), int(cx + rx + 2)):
+                dx, dy = (x - cx) / (rx + 0.4), (y - cy) / (ry + 0.4)
+                if dx * dx + dy * dy <= 1:
+                    t = (dx + dy * 1.1) * 0.5 + 0.5
+                    step = min(tones - 1, max(0, int(t * tones)))
+                    self.p(x, y, shade(base, light + (dark - light) * step / (tones - 1)))
 
-    def line(self, pts, c):
-        ImageDraw.Draw(self.img).line(pts, fill=c, width=1)
+    def line(self, x0, y0, x1, y1, c, w=1):
+        n = int(max(abs(x1 - x0), abs(y1 - y0))) + 1
+        for i in range(n + 1):
+            t = i / max(1, n)
+            for k in range(w):
+                self.p(x0 + (x1 - x0) * t + k, y0 + (y1 - y0) * t, c)
+
+    def poly(self, pts, c):
+        ImageDraw.Draw(self.img).polygon(pts, fill=tuple(c) + (255,))
 
     def outline(self):
         src = self.img.copy().load()
         for y in range(N):
             for x in range(N):
-                if src[x, y][3] == 0:
-                    for dx, dy in ((1, 0), (-1, 0), (0, 1), (0, -1)):
-                        nx, ny = x + dx, y + dy
-                        if 0 <= nx < N and 0 <= ny < N and src[nx, ny][3] > 0 and src[nx, ny] != OUTLINE:
-                            self.px[x, y] = OUTLINE
-                            break
+                if src[x, y][3]:
+                    continue
+                nb = [src[x + dx, y + dy] for dx, dy in ((1, 0), (-1, 0), (0, 1), (0, -1))
+                      if 0 <= x + dx < N and 0 <= y + dy < N and src[x + dx, y + dy][3] > 100]
+                if nb:
+                    d = min(nb, key=lambda c: c[0] + c[1] + c[2])
+                    self.px[x, y] = mix(shade(d, 0.4), (28, 20, 24), 0.5) + (255,)
 
-    def save(self, name):
-        self.outline()
-        self.img.save(os.path.join(OUT, name + ".png"))
-        return self.img
+
+def tray(s, cy=15):
+    """Mẹt tre đan: hình bầu dục nhìn nghiêng, có vân đan."""
+    rim, weave = (150, 108, 62), (190, 146, 90)
+    s.blob(12, cy + 2, 10, 5, rim, 1.1, 0.7, 3)
+    for y in range(cy - 1, cy + 5):
+        for x in range(3, 21):
+            if ((x - 12) / 9.0) ** 2 + ((y - cy - 1) / 3.6) ** 2 <= 1:
+                s.p(x, y, weave if (x + y) % 3 else shade(weave, 0.82))
 
 
 # ---------- Kỷ vật ----------
 
-def chuong():
+def chuong_ba_noi():
     s = I()
-    brass, red = (214, 168, 64, 255), (196, 44, 44, 255)
-    s.rect(7, 1, 8, 3, red)                       # dây đỏ
-    s.rows = None
-    for y, (a, b) in enumerate([(6, 9), (5, 10), (5, 10), (4, 11), (4, 11), (4, 11), (3, 12), (2, 13)]):
-        s.rect(a, 4 + y, b, 4 + y, brass)
-    s.rect(2, 12, 13, 12, shade(brass, 0.8))      # vành chuông
-    s.rect(9, 5, 11, 11, shade(brass, 0.8))       # bóng phải
-    s.p(5, 6, shade(brass, 1.3)); s.p(5, 7, shade(brass, 1.3))
-    s.rect(7, 13, 8, 14, (120, 92, 40, 255))      # quả lắc
-    return s.save("chuong_ba_noi")
+    brass = (214, 168, 64)
+    s.rect(11, 1, 12, 3, (196, 44, 44))  # dây đỏ
+    s.blob(12, 4, 2, 1.5, brass)
+    for y in range(5, 18):  # thân chuông loe dần
+        half = 3 + (y - 5) * 0.55 + (2 if y > 15 else 0)
+        for x in range(int(12 - half), int(12 + half) + 1):
+            t = (x - 12) / half
+            c = shade(brass, 1.25 if t < -0.5 else 1.05 if t < 0 else 0.85 if t < 0.55 else 0.68)
+            s.p(x, y, c)
+    s.rect(4, 18, 20, 18, shade(brass, 0.6))
+    s.rect(5, 10, 18, 10, shade(brass, 0.78))  # vành trang trí
+    s.p(8, 7, (255, 240, 190)); s.p(8, 8, (250, 220, 140))
+    s.blob(12, 20, 1.5, 1.5, (120, 90, 40))  # quả lắc
+    s.outline()
+    return s
 
 
-def dieu():
+def dieu_hai_lam():
     s = I()
-    paper, bamboo, tail = (236, 176, 60, 255), (150, 110, 60, 255), (200, 50, 50, 255)
-    for y in range(0, 13):                         # thân diều hình thoi
-        half = y if y <= 6 else 12 - y
-        s.rect(7 - half, y, 8 + half, y, paper)
-    s.rect(2, 6, 13, 6, (220, 90, 60, 255))        # sọc ngang
-    s.line([(7, 0), (7, 12)], bamboo); s.line([(1, 6), (14, 6)], bamboo)
-    s.rect(9, 1, 13, 5, shade(paper, 0.85)) if False else None
-    for x, y in ((8, 13), (9, 14), (10, 15), (11, 14), (12, 15)):  # đuôi
-        s.p(x, y, tail)
-    return s.save("dieu_hai_lam")
+    s.poly([(12, 1), (21, 9), (12, 17), (3, 9)], (232, 164, 52))
+    s.poly([(12, 1), (21, 9), (12, 9)], (246, 196, 82))
+    s.poly([(3, 9), (12, 17), (12, 9)], (206, 126, 40))
+    s.line(12, 1, 12, 17, (120, 76, 40))
+    s.line(3, 9, 21, 9, (120, 76, 40))
+    for i, (x, y) in enumerate(((13, 18), (14, 20), (16, 21), (18, 22), (20, 23))):  # đuôi diều
+        s.p(x, y, (200, 50, 46) if i % 2 == 0 else (240, 230, 210))
+        s.p(x + 1, y, (200, 50, 46) if i % 2 == 0 else (240, 230, 210))
+    s.outline()
+    return s
 
 
 def luu_but_nhom():
     s = I()
-    cover, page, ink = (120, 70, 50, 255), (240, 230, 206, 255), (110, 100, 130, 255)
-    s.rect(0, 4, 15, 13, cover)                   # bìa mở
-    s.rect(1, 3, 7, 12, page); s.rect(8, 3, 14, 12, shade(page, 0.92))
-    s.line([(7, 3), (7, 12)], shade(page, 0.7))   # gáy giữa
-    for y in (5, 7, 9):
-        s.line([(2, y), (6, y)], ink)
-        s.line([(9, y), (13, y)], ink)
-    s.p(11, 10, (200, 60, 70, 255))               # trái tim nhỏ ai đó vẽ
-    return s.save("luu_but_nhom")
+    cover = (124, 76, 52)
+    s.rect(1, 6, 22, 19, cover)
+    s.rect(2, 5, 11, 18, (244, 234, 210))
+    s.rect(12, 5, 21, 18, (232, 220, 194))
+    s.rect(11, 5, 12, 18, shade(cover, 0.8))
+    for y in (8, 10, 12, 14):
+        s.rect(4, y, 9, y, (120, 110, 150))
+        s.rect(14, y, 19 - (y == 14) * 3, y, (120, 110, 150))
+    s.rect(17, 3, 18, 8, (196, 44, 44))  # dải đánh dấu
+    s.rect(2, 18, 11, 18, (210, 198, 176))
+    s.outline()
+    return s
 
 
 def luu_but():
     s = I()
-    cover, pages, strap = (70, 96, 150, 255), (236, 228, 204, 255), (180, 140, 60, 255)
-    s.rect(3, 1, 12, 14, cover)
-    s.rect(12, 2, 13, 13, pages)                  # mép giấy
-    s.rect(3, 1, 4, 14, shade(cover, 0.7))        # gáy
-    s.rect(6, 4, 10, 6, (226, 214, 180, 255))     # nhãn
-    s.rect(3, 9, 13, 10, strap)                   # dây cài
-    s.p(13, 9, shade(strap, 1.2))
-    return s.save("luu_but")
+    blue = (62, 92, 158)
+    s.rect(5, 2, 19, 21, blue)
+    s.rect(5, 2, 7, 21, shade(blue, 1.25))
+    s.rect(17, 2, 19, 21, shade(blue, 0.75))
+    s.rect(18, 3, 20, 21, (236, 226, 204))  # mép giấy
+    s.rect(9, 6, 16, 10, (232, 218, 176))  # nhãn
+    s.rect(10, 8, 15, 8, (150, 130, 100))
+    s.rect(5, 15, 19, 16, (214, 176, 72))  # dây gài
+    s.outline()
+    return s
 
 
 def bi_ve():
     s = I()
-    glass, swirl = (90, 170, 120, 255), (200, 80, 60, 255)
-    s.ellipse(7, 8, 5, 5, glass)
-    s.line([(4, 9), (6, 7), (9, 9), (11, 7)], swirl)  # vân màu trong bi
-    s.ellipse(10, 10, 2, 2, shade(glass, 0.75))
-    s.p(5, 5, (236, 250, 240, 255)); s.p(6, 5, (236, 250, 240, 255)); s.p(5, 6, (236, 250, 240, 255))
-    return s.save("bi_ve")
+    s.blob(12, 12, 8, 8, (70, 170, 120), 1.3, 0.6, 5)
+    for i in range(10):  # vân xoắn trong viên bi
+        a = i * 0.6
+        s.p(12 + math.cos(a) * (2 + i * 0.45), 12 + math.sin(a) * (2 + i * 0.45), (200, 60, 60) if i % 3 else (240, 240, 220))
+    s.rect(7, 7, 8, 8, (240, 255, 245))
+    s.p(9, 6, (210, 240, 225))
+    s.outline()
+    return s
 
 
-def la_ban():
+def la_ban_tu_che():
     s = I()
-    rim, face = (150, 120, 80, 255), (236, 226, 196, 255)
-    s.ellipse(7, 8, 6, 6, rim)
-    s.ellipse(7, 8, 4, 4, face)
-    s.rect(7, 1, 8, 2, rim)                       # khuyên đeo
-    s.line([(7, 5), (7, 8)], (200, 40, 40, 255))  # kim đỏ chỉ bắc
-    s.line([(7, 9), (7, 11)], (60, 60, 70, 255))
-    s.p(7, 8, (40, 40, 40, 255))
-    s.p(4, 8, shade(face, 0.8)); s.p(10, 8, shade(face, 0.8))
-    s.rect(11, 11, 12, 12, (180, 160, 120, 255))  # vết băng dính (tự chế)
-    return s.save("la_ban_tu_che")
+    s.blob(12, 12, 10, 10, (176, 128, 70), 1.25, 0.65, 4)
+    s.blob(12, 12, 7, 7, (240, 232, 210), 1.05, 0.88, 2)
+    for a in range(0, 360, 45):
+        x, y = 12 + math.cos(math.radians(a)) * 6, 12 + math.sin(math.radians(a)) * 6
+        s.p(x, y, (120, 100, 80))
+    s.line(12, 6, 12, 11, (200, 40, 40))
+    s.line(12, 13, 12, 18, (60, 80, 150))
+    s.p(12, 12, (60, 50, 40))
+    s.rect(11, 0, 13, 2, (176, 128, 70))
+    s.outline()
+    return s
 
 
-def anh_nhom():
+def anh_nhom_7():
     s = I()
-    frame, sky = (190, 170, 130, 255), (150, 180, 200, 255)
-    s.rect(0, 2, 15, 13, frame)
-    s.rect(1, 3, 14, 12, sky)
-    s.rect(1, 10, 14, 12, (110, 140, 90, 255))    # bãi cỏ
-    heads = [(2, 8), (4, 7), (6, 8), (8, 7), (10, 8), (12, 7), (13, 9)]
-    for i, (x, y) in enumerate(heads):
-        s.p(x, y, (40, 34, 36, 255))
-        s.p(x, y + 1, (232, 196, 160, 255))
-        s.p(x, y + 2, [(60, 70, 120, 255), (230, 180, 60, 255), (70, 120, 80, 255), (230, 230, 236, 255),
-                       (140, 128, 80, 255), (70, 56, 54, 255), (226, 232, 236, 255)][i])
-    s.rect(13, 3, 14, 6, (90, 80, 100, 255))      # một góc ảnh bị gạch mờ
-    return s.save("anh_nhom_7")
+    s.rect(1, 3, 22, 20, (150, 112, 66))
+    s.rect(1, 3, 22, 3, (186, 146, 92))
+    s.rect(3, 5, 20, 18, (150, 188, 214))  # trời
+    s.rect(3, 14, 20, 18, (110, 150, 80))  # cỏ
+    colors = [(60, 70, 120), (230, 180, 50), (60, 120, 80), (230, 230, 236), (120, 118, 70), (60, 46, 44), (226, 232, 236)]
+    for i, c in enumerate(colors):  # 7 người
+        x = 4 + i * 2 + (1 if i > 3 else 0)
+        s.p(x, 11, (236, 192, 156))
+        s.p(x, 10, (30, 26, 30))
+        s.rect(x, 12, x, 14, c)
+    s.rect(18, 5, 20, 8, (100, 100, 120))  # góc ảnh ố
+    s.outline()
+    return s
 
 
 # ---------- Đồ lễ ----------
 
-def met(s, fill_fn):
-    tray, rim = (186, 146, 86, 255), (140, 100, 54, 255)
-    s.ellipse(7, 11, 7, 3, rim)
-    s.ellipse(7, 10, 7, 3, tray)
-    for x in range(2, 14, 3):
-        s.p(x, 10, shade(tray, 0.85))
-    fill_fn(s)
-
-
 def met_gao_muoi():
     s = I()
-    def f(s):
-        s.ellipse(5, 8, 3, 2, (244, 240, 230, 255))       # gạo
-        s.ellipse(10, 8, 3, 2, (228, 232, 240, 255))      # muối
-        for x, y in ((4, 7), (6, 8), (10, 7), (11, 8)):
-            s.p(x, y, (210, 204, 190, 255))
-    met(s, f)
-    return s.save("met_gao_muoi")
+    tray(s)
+    s.blob(8, 12, 4, 3, (246, 244, 236), 1.05, 0.82, 3)
+    s.blob(16, 12, 4, 3, (226, 232, 240), 1.08, 0.8, 3)
+    for x, y in ((7, 11), (9, 12), (15, 11), (17, 12)):
+        s.p(x, y, (255, 255, 255))
+    s.outline()
+    return s
 
 
 def bo_nhang():
     s = I()
-    stick, handle, ember = (150, 90, 60, 255), (196, 40, 50, 255), (255, 150, 60, 255)
-    for i, x in enumerate((5, 7, 9, 11)):
-        top = 2 + (i % 2)
-        s.line([(x, top), (x - 1, 10)], stick)
-        s.p(x, top, ember)
-    s.rect(3, 10, 10, 14, handle)                 # chân nhang đỏ bó lại
-    s.rect(3, 11, 10, 11, (230, 200, 90, 255))    # dây buộc
-    s.p(6, 0, (180, 180, 190, 255)); s.p(10, 1, (180, 180, 190, 255))  # khói
-    return s.save("bo_nhang")
+    for i, x in enumerate(range(6, 18, 2)):
+        top = 3 + (i % 3)
+        s.rect(x, top, x, 20, (156, 70, 50) if i % 2 else (176, 84, 58))
+        s.rect(x, top, x, top + 1, (250, 150, 60))  # đầu nhang cháy
+        s.p(x, top - 2, (180, 180, 190), 160)
+    s.rect(5, 15, 18, 18, (196, 40, 40))  # giấy đỏ bó
+    s.rect(5, 16, 18, 16, (230, 190, 70))
+    s.outline()
+    return s
 
 
 def met_trau_cau():
     s = I()
-    def f(s):
-        leaf = (70, 140, 60, 255)
-        s.ellipse(5, 8, 3, 2, leaf); s.ellipse(8, 7, 3, 2, shade(leaf, 0.85))
-        s.line([(3, 8), (7, 8)], shade(leaf, 1.3))
-        s.ellipse(11, 8, 2, 2, (196, 140, 60, 255))       # quả cau
-        s.p(10, 7, (230, 190, 100, 255))
-    met(s, f)
-    return s.save("met_trau_cau")
+    tray(s)
+    for cx, cy in ((7, 12), (11, 11)):  # lá trầu gấp
+        s.blob(cx, cy, 3, 2.5, (70, 140, 60), 1.2, 0.7, 3)
+    s.blob(16, 11, 2.5, 2.5, (214, 140, 50))  # quả cau
+    s.blob(18, 13, 2, 2, (196, 120, 40))
+    s.p(15, 10, (250, 200, 120))
+    s.outline()
+    return s
 
 
-def hoa_hue():
+def bo_hoa_hue():
     s = I()
-    stem, white = (70, 130, 60, 255), (246, 244, 236, 255)
-    for x, top in ((5, 4), (8, 2), (11, 5)):
-        s.line([(x, top + 2), (7, 14)], stem)
-        s.rect(x - 1, top, x + 1, top + 1, white)
-        s.p(x, top - 1, white)
-        s.p(x + 1, top + 1, (220, 220, 200, 255))
-    s.rect(6, 11, 8, 12, (230, 70, 80, 255))      # dây buộc
-    return s.save("bo_hoa_hue")
+    for x0, x1 in ((11, 8), (12, 12), (13, 16)):
+        s.line(x0, 21, x1, 8, (70, 130, 60))
+    for cx, cy in ((8, 6), (12, 4), (16, 6), (10, 9), (14, 9)):
+        s.blob(cx, cy, 2, 2, (248, 248, 240), 1.0, 0.82, 2)
+        s.p(cx, cy, (240, 220, 140))
+    s.poly([(8, 16), (16, 16), (14, 22), (10, 22)], (200, 50, 50))  # giấy gói
+    s.rect(9, 17, 15, 17, (230, 190, 70))
+    s.outline()
+    return s
 
 
 # ---------- Đồ chiến đấu ----------
 
 def bua_vang():
     s = I()
-    paper, ink = (240, 204, 70, 255), (200, 36, 36, 255)
-    s.rect(4, 0, 11, 15, paper)
-    s.rect(10, 1, 11, 14, shade(paper, 0.85))
-    s.rect(5, 2, 9, 2, ink)                       # nét bùa
-    s.line([(7, 3), (7, 12)], ink)
-    s.line([(5, 5), (9, 5)], ink)
-    s.line([(5, 8), (9, 7)], ink)
-    s.rect(6, 10, 8, 11, ink)
-    s.rect(5, 13, 9, 13, ink)
-    return s.save("bua_vang")
+    s.rect(7, 1, 16, 22, (236, 200, 70))
+    s.rect(7, 1, 8, 22, (250, 222, 110))
+    s.rect(15, 1, 16, 22, (204, 166, 50))
+    red = (190, 36, 36)
+    s.rect(9, 4, 14, 4, red)
+    s.rect(11, 4, 12, 18, red)
+    for y in (7, 10, 13):
+        s.rect(9, y, 14, y, red)
+    s.rect(9, 16, 10, 19, red)
+    s.rect(13, 16, 14, 19, red)
+    s.outline()
+    return s
 
 
-def chai(name, liquid):
+def bottle(liquid):
     s = I()
-    glass, cork = (200, 220, 230, 255), (150, 100, 60, 255)
-    s.rect(6, 0, 9, 2, cork)
-    s.rect(6, 3, 9, 4, glass)                     # cổ chai
-    s.ellipse(7, 10, 5, 5, glass)
-    s.ellipse(7, 11, 4, 3, liquid)
-    s.rect(3, 9, 12, 9, shade(liquid, 1.2))       # mặt nước
-    s.ellipse(9, 12, 2, 1, shade(liquid, 0.75))
-    s.p(4, 7, (250, 250, 255, 255)); s.p(4, 8, (250, 250, 255, 255))
-    return s.save(name)
+    glass = (190, 220, 230)
+    s.rect(10, 1, 13, 4, (130, 90, 56))  # nút bần
+    s.rect(10, 1, 13, 1, (166, 120, 80))
+    s.rect(9, 5, 14, 7, glass)
+    s.blob(12, 15, 7, 7, glass, 1.1, 0.8, 3)
+    for y in range(12, 22):
+        for x in range(5, 20):
+            if ((x - 12) / 6.4) ** 2 + ((y - 15) / 6.4) ** 2 <= 1:
+                s.p(x, y, shade(liquid, 1.15 if y == 12 else 1.0 if x < 13 else 0.8))
+    s.rect(7, 11, 8, 13, (240, 250, 255))  # ánh sáng thuỷ tinh
+    s.outline()
+    return s
+
+
+# ---------- Nguyên liệu ----------
+
+def gao_nep():
+    s = I()
+    s.blob(12, 15, 8, 7, (214, 190, 140), 1.12, 0.7, 4)  # bao vải
+    s.rect(9, 6, 15, 9, (196, 170, 120))
+    s.rect(8, 9, 16, 10, (150, 110, 70))  # dây buộc
+    for x, y in ((10, 4), (12, 3), (14, 4), (11, 5), (13, 5)):
+        s.p(x, y, (250, 248, 238))
+    s.outline()
+    return s
+
+
+def muoi():
+    s = I()
+    s.blob(12, 16, 9, 5, (110, 130, 170), 1.15, 0.7, 3)  # bát
+    s.blob(12, 12, 7, 3.5, (240, 244, 250), 1.05, 0.85, 3)
+    for x, y in ((9, 11), (13, 10), (15, 12)):
+        s.p(x, y, (255, 255, 255))
+    s.outline()
+    return s
+
+
+def trau():
+    s = I()
+    for y in range(3, 21):  # lá hình tim
+        t = (y - 3) / 18.0
+        half = 8 * math.sin(math.pi * min(1, t * 1.1 + 0.12)) * (1 - t * 0.35)
+        for x in range(int(12 - half), int(12 + half) + 1):
+            c = (80, 150, 66) if x < 12 else (60, 120, 52)
+            if y < 5 and abs(x - 12) < 2:
+                continue  # khe tim
+            s.p(x, y, c)
+    s.line(12, 5, 12, 21, (150, 190, 110))
+    for k in range(3):
+        s.line(12, 9 + k * 4, 8, 7 + k * 4, (120, 180, 96))
+        s.line(12, 9 + k * 4, 16, 7 + k * 4, (96, 150, 80))
+    s.outline()
+    return s
+
+
+def cau():
+    s = I()
+    s.line(12, 2, 12, 8, (120, 100, 60))
+    for cx, cy in ((8, 12), (16, 12), (12, 16), (12, 9)):
+        s.blob(cx, cy, 3.5, 4, (226, 150, 52), 1.2, 0.72, 3)
+    s.p(7, 10, (255, 220, 160))
+    s.outline()
+    return s
+
+
+def ngai_cuu():
+    s = I()
+    s.line(12, 22, 12, 4, (110, 130, 90))
+    for k, y in enumerate(range(5, 20, 3)):  # lá xẻ thuỳ
+        d = 1 if k % 2 else -1
+        for i in range(5):
+            s.p(12 + d * (i + 1), y + i // 2, (150, 176, 140) if i % 2 else (176, 200, 166))
+            s.p(12 + d * (i + 1), y + i // 2 + 1, (120, 146, 112))
+    s.outline()
+    return s
+
+
+def hoa_hue():
+    s = I()
+    s.line(12, 22, 12, 6, (70, 130, 60))
+    s.line(12, 16, 8, 12, (80, 150, 66))
+    for cx, cy in ((12, 4), (10, 7), (14, 7), (12, 10)):
+        s.blob(cx, cy, 2, 2, (248, 248, 240), 1.0, 0.8, 2)
+    s.p(12, 4, (240, 220, 140))
+    s.outline()
+    return s
 
 
 ITEMS = [
-    ("Chuông nhỏ bà nội", chuong), ("Con diều Hải làm", dieu), ("Lưu bút nhóm", luu_but_nhom),
-    ("Lưu bút", luu_but), ("Viên bi ve", bi_ve), ("La bàn tự chế", la_ban), ("Ảnh nhóm 7 người", anh_nhom),
-    ("Mẹt gạo muối", met_gao_muoi), ("Bó nhang", bo_nhang), ("Mẹt trầu cau", met_trau_cau), ("Bó hoa huệ", hoa_hue),
-    ("Bùa vàng", bua_vang), ("Thuốc hồi HP", lambda: chai("thuoc_hoi_hp", (210, 50, 60, 255))),
-    ("Thuốc giảm Âm khí", lambda: chai("thuoc_giam_am_khi", (80, 200, 170, 255))),
+    ("chuong_ba_noi", "Chuông nhỏ bà nội", chuong_ba_noi), ("dieu_hai_lam", "Con diều Hải làm", dieu_hai_lam),
+    ("luu_but_nhom", "Lưu bút nhóm", luu_but_nhom), ("luu_but", "Lưu bút", luu_but), ("bi_ve", "Viên bi ve", bi_ve),
+    ("la_ban_tu_che", "La bàn tự chế", la_ban_tu_che), ("anh_nhom_7", "Ảnh nhóm 7 người", anh_nhom_7),
+    ("met_gao_muoi", "Mẹt gạo muối", met_gao_muoi), ("bo_nhang", "Bó nhang", bo_nhang),
+    ("met_trau_cau", "Mẹt trầu cau", met_trau_cau), ("bo_hoa_hue", "Bó hoa huệ", bo_hoa_hue),
+    ("bua_vang", "Bùa vàng", bua_vang), ("thuoc_hoi_hp", "Thuốc hồi HP", lambda: bottle((214, 52, 60))),
+    ("thuoc_giam_am_khi", "Thuốc giảm Âm khí", lambda: bottle((70, 200, 170))),
+    ("gao_nep", "Gạo nếp", gao_nep), ("muoi", "Muối", muoi), ("trau", "Trầu", trau), ("cau", "Cau", cau),
+    ("ngai_cuu", "Ngải cứu", ngai_cuu), ("hoa_hue", "Hoa huệ", hoa_hue),
 ]
 
-if __name__ == "__main__":
-    scale, cell, cols = 8, 190, 7
-    rows = (len(ITEMS) + cols - 1) // cols
-    sheet = Image.new("RGBA", (cols * cell + 20, rows * (N * scale + 70) + 20), (30, 30, 40, 255))
+
+def main():
+    imgs = []
+    for key, label, fn in ITEMS:
+        im = fn().img
+        im.save(os.path.join(OUT, key + ".png"))
+        imgs.append((label, im))
+    sc, cw, cols = 5, 24 * 5 + 40, 7
+    rows = (len(imgs) + cols - 1) // cols
+    sheet = Image.new("RGBA", (cols * cw + 20, rows * (24 * sc + 50) + 20), (30, 30, 40, 255))
     d = ImageDraw.Draw(sheet)
     try:
-        font = ImageFont.truetype("/usr/share/fonts/truetype/dejavu/DejaVuSans-Bold.ttf", 15)
+        font = ImageFont.truetype("C:/Windows/Fonts/arialbd.ttf", 14)
     except OSError:
         font = ImageFont.load_default()
-    for i, (label, fn) in enumerate(ITEMS):
-        im = fn()
-        x = 10 + (i % cols) * cell
-        y = 10 + (i // cols) * (N * scale + 70)
-        sheet.alpha_composite(im.resize((N * scale, N * scale), Image.NEAREST), (x + (cell - N * scale) // 2, y))
+    for i, (label, im) in enumerate(imgs):
+        x, y = 10 + (i % cols) * cw, 10 + (i // cols) * (24 * sc + 50)
+        sheet.alpha_composite(im.resize((24 * sc, 24 * sc), Image.NEAREST), (x + 20, y))
         tw = d.textlength(label, font=font)
-        d.text((x + (cell - tw) / 2, y + N * scale + 12), label, fill=(240, 230, 210), font=font)
-    sheet.save(os.path.join(ROOT, "sprites", "_items_preview.png"))
-    print("done")
+        d.text((x + (cw - tw) / 2, y + 24 * sc + 8), label, fill=(240, 230, 210), font=font)
+    sheet.save(os.path.join(PREVIEW, "_items_preview.png"))
+
+
+if __name__ == "__main__":
+    main()
+    print("done →", OUT)

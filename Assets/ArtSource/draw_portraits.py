@@ -1,19 +1,37 @@
-"""Chân dung hội thoại 48x48. Chạy: python3 draw_portraits.py"""
+"""Chân dung 48x48 (nửa người, mặt người lớn) cho thẻ trận, bảng chọn người, hội thoại sau này.
+Chạy: python draw_portraits.py → ghi thẳng vào Assets/Resources/Portraits/<tên>.png
+Mặt dựng bằng hình học + chi tiết vẽ tay (mắt, mày, mũi, miệng); tóc, áo riêng từng người."""
 from PIL import Image, ImageDraw, ImageFont
+import math
 import os
+import random
 
 N = 48
-ROOT = os.path.dirname(os.path.abspath(__file__))
-OUT = os.path.join(ROOT, "sprites", "portraits")
+HERE = os.path.dirname(os.path.abspath(__file__))
+PARENT = os.path.dirname(HERE)
+ASSETS = PARENT if os.path.basename(PARENT) == "Assets" else os.path.join(PARENT, "Assets")
+OUT = os.path.join(ASSETS, "Resources", "Portraits")
+PREVIEW = os.path.join(HERE, "sprites")
 os.makedirs(OUT, exist_ok=True)
-OUTLINE = (30, 20, 26, 255)
-SKIN = (238, 196, 158, 255)
-EYE = (36, 26, 30, 255)
-WHITE = (246, 240, 236, 255)
+os.makedirs(PREVIEW, exist_ok=True)
+
+SKIN = (236, 192, 156)
+WHITE = (244, 240, 234)
 
 
 def shade(c, f):
-    return (max(0, min(255, int(c[0] * f))), max(0, min(255, int(c[1] * f))), max(0, min(255, int(c[2] * f))), 255)
+    return tuple(max(0, min(255, int(v * f))) for v in c[:3])
+
+
+def mix(a, b, t):
+    return tuple(int(a[i] + (b[i] - a[i]) * t) for i in range(3))
+
+
+# nửa bề rộng mặt theo từng dòng (mặt chiếm dòng 9..34, tâm x = 23.5)
+FACE_HW = {9: 7, 10: 9, 11: 10, 12: 10.5, 25: 10.5, 26: 10, 27: 9.5, 28: 9, 29: 8.5, 30: 7.5, 31: 6.5, 32: 5.5,
+           33: 4.5, 34: 3}
+for _y in range(13, 25):
+    FACE_HW[_y] = 11
 
 
 class P:
@@ -21,335 +39,431 @@ class P:
         self.img = Image.new("RGBA", (N, N), (0, 0, 0, 0))
         self.px = self.img.load()
         self.skin = skin
-        self.skin_sh = shade(skin, 0.84)
+        self.sh = shade(skin, 0.84)
+        self.sh2 = shade(skin, 0.72)
 
-    def p(self, x, y, c):
+    def p(self, x, y, c, a=255):
+        x, y = int(round(x)), int(round(y))
         if 0 <= x < N and 0 <= y < N:
-            self.px[x, y] = c
+            self.px[x, y] = tuple(c[:3]) + (a,)
+
+    def get(self, x, y):
+        return self.px[x, y] if 0 <= x < N and 0 <= y < N else (0, 0, 0, 0)
 
     def rect(self, x0, y0, x1, y1, c):
         for y in range(y0, y1 + 1):
             for x in range(x0, x1 + 1):
                 self.p(x, y, c)
 
-    def span(self, y, x0, x1, c):
-        self.rect(x0, y, x1, y, c)
-
-    def ellipse(self, cx, cy, rx, ry, c):
+    def fill(self, test, colorf):
         for y in range(N):
             for x in range(N):
-                if ((x - cx) / (rx + 0.5)) ** 2 + ((y - cy) / (ry + 0.5)) ** 2 <= 1:
-                    self.p(x, y, c)
+                if test(x, y):
+                    c = colorf(x, y)
+                    if c is not None:
+                        self.p(x, y, c)
 
-    def line(self, pts, c, w=1):
-        ImageDraw.Draw(self.img).line(pts, fill=c, width=w)
-
-    def outline(self):
+    def outline(self, col=(28, 20, 26)):
         src = self.img.copy().load()
         for y in range(N):
             for x in range(N):
-                if src[x, y][3] == 0:
-                    for dx, dy in ((1, 0), (-1, 0), (0, 1), (0, -1)):
-                        nx, ny = x + dx, y + dy
-                        if 0 <= nx < N and 0 <= ny < N and src[nx, ny][3] > 0 and src[nx, ny] != OUTLINE:
-                            self.px[x, y] = OUTLINE
-                            break
-
-    # ---- phần chung ----
-    def shoulders(self, cloth, wide=0):
-        for i, y in enumerate(range(38, 48)):
-            half = min(17 + wide, 10 + i * 3 + wide)
-            self.span(y, 24 - half, 23 + half, cloth)
-        for y in range(38, 48):                       # bóng nửa phải
-            for x in range(30, 48):
-                if self.px[x, y][:3] == cloth[:3]:
-                    self.px[x, y] = shade(cloth, 0.8)
-
-    def head(self, jaw=0):
-        s, sh = self.skin, self.skin_sh
-        self.rect(20, 31, 27, 39, sh)                 # cổ
-        rows = {}
-        for y in range(9, 36):
-            if y <= 24:
-                half = 11
-                if y < 13:
-                    half = [7, 9, 10, 11][y - 9]
-            else:
-                half = max(4, 11 - (y - 24) * 2 // 3 - jaw)
-            rows[y] = half
-            self.span(y, 24 - half, 23 + half, s)
-        for y, half in rows.items():                  # má phải tối
-            self.span(y, 23 + half - 3, 23 + half, sh)
-        self.rect(11, 20, 12, 25, s); self.rect(35, 20, 36, 25, sh)   # tai
-        self.p(12, 22, sh)
-
-    def eyes(self, y=21, color=EYE, look=0, tired=False, closed=False):
-        for x0 in (16, 27):
-            if closed:
-                self.span(y + 1, x0, x0 + 3, color)
-                continue
-            self.rect(x0, y, x0 + 3, y + 2, WHITE)
-            self.rect(x0 + 1 + look, y, x0 + 2 + look, y + 2, color)
-            self.p(x0 + 1 + look, y, (250, 250, 255, 255))   # ánh mắt
-            self.span(y - 1, x0, x0 + 3, OUTLINE)            # mí trên
-            if tired:
-                self.span(y + 3, x0, x0 + 3, (190, 140, 140, 255))
-
-    def brows(self, hair, y=18, angry=False, sad=False):
-        for x0, side in ((16, 0), (27, 1)):
-            self.span(y, x0, x0 + 3, hair)
-            if angry:
-                self.p(x0 + (3 if side == 0 else 0), y + 1, hair)
-            if sad:
-                self.p(x0 + (0 if side == 0 else 3), y + 1, hair)
-
-    def nose_mouth(self, mouth="flat", y=30):
-        self.p(24, 26, self.skin_sh); self.p(24, 27, self.skin_sh); self.p(23, 27, shade(self.skin, 0.92))
-        lip = shade(self.skin_sh, 0.75)
-        if mouth == "flat":
-            self.span(y, 22, 25, lip)
-        elif mouth == "smile":
-            self.span(y, 22, 25, lip); self.p(21, y - 1, lip); self.p(26, y - 1, lip)
-        elif mouth == "smirk":
-            self.span(y, 22, 25, lip); self.p(26, y - 1, lip)
-        elif mouth == "open":
-            self.rect(22, y - 1, 25, y + 1, (90, 30, 36, 255))
-        elif mouth == "frown":
-            self.span(y, 22, 25, lip); self.p(21, y + 1, lip); self.p(26, y + 1, lip)
-
-    def blush(self):
-        for x in (15, 16, 31, 32):
-            self.p(x, 26, (228, 150, 130, 255))
-
-    def save(self, name):
-        self.outline()
-        self.img.save(os.path.join(OUT, name + ".png"))
-        return self.img
+                if src[x, y][3]:
+                    continue
+                nb = [src[x + dx, y + dy] for dx, dy in ((1, 0), (-1, 0), (0, 1), (0, -1))
+                      if 0 <= x + dx < N and 0 <= y + dy < N and src[x + dx, y + dy][3]]
+                if nb:
+                    d = min(nb, key=lambda c: c[0] + c[1] + c[2])
+                    self.px[x, y] = mix(shade(d, 0.4), col, 0.5) + (255,)
 
 
-def hair_cap(s, c, top=6, side_to=22, fringe=None):
-    """tóc trùm đầu: chỏm + hai bên; fringe: list (x0,x1,y_bottom) các mảng mái"""
-    for y in range(N):                                 # chỏm tóc: chỉ phủ tới trán (y <= 13)
+def in_face(x, y):
+    hw = FACE_HW.get(y)
+    return hw is not None and 23.5 - hw <= x + 0.5 <= 23.5 + hw
+
+
+# ---------- Các phần chung ----------
+
+def body(p, cloth, collar=None, wide=0):
+    """Vai và áo: hình thang từ dòng 38 xuống đáy."""
+    for y in range(37, N):
+        t = (y - 37) / 10.0
+        half = 11 + wide + t * 11
         for x in range(N):
-            if ((x - 24) / 13.5) ** 2 + ((y - 15) / 10.5) ** 2 <= 1 and (y <= 13 or x <= 13 or x >= 34):
-                s.p(x, y, c)
-    s.rect(11, 14, 13, side_to, c); s.rect(34, 14, 36, side_to, c)
-    for x0, x1, yb in (fringe or []):
-        s.rect(x0, 12, x1, yb, c)
+            if abs(x + 0.5 - 24) <= half:
+                c = cloth
+                if x > 24 + half * 0.35:
+                    c = shade(cloth, 0.8)
+                if y == 37 or (abs(x + 0.5 - 24) > half - 1.5 and y < 40):
+                    c = shade(cloth, 1.1) if x < 24 else shade(cloth, 0.75)
+                p.p(x, y, c)
+    if collar:
+        collar(p)
 
 
-def shine(s, c, pts):
-    for x, y in pts:
-        s.p(x, y, shade(c, 2.0))
+def neck(p):
+    for y in range(32, 40):
+        for x in range(19, 29):
+            c = p.skin if x < 25 else p.sh
+            if y <= 35:
+                c = p.sh2 if y <= 34 else p.sh  # bóng dưới cằm
+            p.p(x, y, c)
 
 
-# ---------- nhân vật ----------
+def face(p):
+    def col(x, y):
+        hw = FACE_HW[y]
+        right = x + 0.5 - 23.5
+        c = p.skin
+        if right > hw * 0.58:
+            c = p.sh
+        if right > hw * 0.9:
+            c = p.sh2
+        if y >= 31 and right > -hw * 0.3:
+            c = p.sh
+        if right < -hw * 0.75 and y > 14:
+            c = mix(p.skin, p.sh, 0.4)
+        return c
+    p.fill(in_face, col)
+    for y in range(19, 26):  # tai
+        for x in (12, 13):
+            p.p(x, y, p.skin if x == 13 else p.sh)
+        for x in (34, 35):
+            p.p(x, y, p.sh2)
+    p.p(13, 22, p.sh2)
+    p.p(34, 22, shade(p.sh2, 0.85))
+
+
+def eyes(p, iris=(70, 52, 44), mood="normal", hollow=False, red=False):
+    lash = (34, 24, 30)
+    for ex in (16, 26):
+        if hollow:
+            p.rect(ex, 20, ex + 5, 22, (18, 18, 26))
+            if red:
+                p.p(ex + 2, 21, (230, 40, 40))
+                p.p(ex + 3, 21, (150, 20, 24))
+            continue
+        p.rect(ex, 20, ex + 5, 20, lash)              # mi trên
+        p.p(ex - (1 if ex == 16 else -6), 20, lash)   # đuôi mắt
+        p.rect(ex + 1, 21, ex + 4, 22, WHITE)
+        p.rect(ex + 2, 21, ex + 3, 22, iris)
+        p.p(ex + 2, 21, mix(iris, (255, 255, 255), 0.55))  # chấm sáng
+        p.p(ex + 3, 22, shade(iris, 0.6))
+        p.rect(ex + 1, 23, ex + 4, 23, shade(p.skin, 0.88))  # mí dưới
+    # lông mày
+    bc = p.brow
+    if mood == "angry":
+        for i in range(6):
+            p.p(15 + i, 17 + (i // 3), bc)
+            p.p(32 - i, 17 + (i // 3), bc)
+    elif mood == "sad":
+        for i in range(6):
+            p.p(15 + i, 18 - (i // 3), bc)
+            p.p(32 - i, 18 - (i // 3), bc)
+    else:
+        for i in range(6):
+            p.p(15 + i, 17 if 1 <= i <= 4 else 18, bc)
+            p.p(32 - i, 17 if 1 <= i <= 4 else 18, bc)
+
+
+def nose_mouth(p, mood="normal", open_mouth=False):
+    for y in range(22, 27):
+        p.p(25, y, p.sh)
+    p.p(23, 23, mix(p.skin, (255, 255, 255), 0.25))
+    p.p(23, 27, p.sh2)
+    p.p(24, 27, p.sh)
+    p.p(25, 27, p.sh2)
+    lip = (166, 84, 80)
+    if open_mouth:
+        p.rect(20, 29, 27, 32, (40, 14, 18))
+        for x in range(20, 28, 2):
+            p.p(x, 29, (220, 214, 200))
+            p.p(x + 1, 32, (220, 214, 200))
+        return
+    if mood == "sad":
+        p.rect(21, 30, 26, 30, lip)
+        p.p(20, 31, lip)
+        p.p(27, 31, lip)
+    else:
+        p.rect(21, 30, 26, 30, lip)
+        p.p(20, 29, shade(lip, 1.1))
+        p.p(27, 29, shade(lip, 1.1))
+        p.rect(22, 31, 25, 31, mix(p.skin, lip, 0.35))
+    p.p(17, 26, mix(p.skin, (236, 140, 130), 0.4))  # má
+    p.p(30, 26, mix(p.sh, (236, 140, 130), 0.3))
+
+
+def hair_cap(p, hair, fringe, top=9, spread=14.5, side_to=24, highlight=True, seed=0):
+    """Tóc phủ đỉnh đầu: trong elip sọ và trên đường mái fringe(x)."""
+    hl = mix(hair, (190, 196, 230), 0.38) if sum(hair) < 200 else mix(hair, (255, 240, 210), 0.35)
+    mid = shade(hair, 0.82)
+    dk = shade(hair, 0.62)
+    cells = set()
+    for y in range(N):
+        for x in range(N):
+            e = ((x + 0.5 - 24) / spread) ** 2 + ((y + 0.5 - 20) / (20 - top + 3)) ** 2
+            if e > 1 or y > side_to or y > fringe(x):
+                continue
+            cells.add((x, y))
+            c = hair
+            if x > 30 or y >= fringe(x) - 1:
+                c = dk  # mép mái và bên phải tối
+            elif x > 27 or y >= fringe(x) - 3:
+                c = mid
+            p.p(x, y, c)
+    for x0 in range(13, 36, 4):  # sợi tóc chéo từ đỉnh xuống mái
+        for k in range(12):
+            q = (x0 - k // 3, top + 3 + k)
+            if q in cells and q[1] < fringe(q[0]) - 1:
+                p.p(q[0], q[1], dk if q[0] > 27 else mid)
+    if highlight:  # vệt sáng cong trên đỉnh đầu
+        for x in range(15, 28):
+            y = top + 3 + round(((x - 21) / 6.5) ** 2 * 2)
+            if (x, y) in cells and x % 4 != 3:
+                p.p(x, y, hl)
+                if 17 <= x <= 24 and (x, y + 1) in cells:
+                    p.p(x, y + 1, mix(hl, hair, 0.5))
+
+
+def back_hair(p, hair, y_end, half_top=15, half_bottom=17, part=False):
+    dk = shade(hair, 0.62)
+    for y in range(12, y_end + 1):
+        t = (y - 12) / max(1, y_end - 12)
+        half = half_top + (half_bottom - half_top) * t
+        for x in range(N):
+            if abs(x + 0.5 - 24) <= half:
+                c = hair if x < 24 else dk
+                if (x * 7 + y) % 9 == 0:
+                    c = shade(hair, 0.8)
+                p.p(x, y, c)
+
+
+def glasses(p, frame=(48, 42, 44)):
+    for ex in (15, 25):
+        for x in range(ex, ex + 8):
+            p.p(x, 19, frame)
+            p.p(x, 24, frame)
+        for y in range(19, 25):
+            p.p(ex, y, frame)
+            p.p(ex + 7, y, frame)
+        p.p(ex + 1, 20, (226, 238, 248))
+    p.p(23, 21, frame)
+    p.p(24, 21, frame)
+
+
+# ---------- Từng người ----------
 
 def minh():
-    s = P()
-    jacket, tee = (44, 62, 112, 255), (232, 232, 236, 255)
-    s.shoulders(jacket)
-    s.rect(19, 39, 28, 47, tee)
-    s.head()
-    s.eyes(look=-1); s.nose_mouth("flat")
-    hair = (28, 26, 34, 255)
-    hair_cap(s, hair, fringe=[(14, 18, 18), (19, 22, 16), (26, 30, 17)])
-    for x, y in ((14, 4), (20, 3), (27, 4), (33, 6), (17, 5)):   # tóc rối dựng
-        s.rect(x, y, x + 1, y + 3, hair)
-    s.brows(hair, sad=True)
-    shine(s, hair, [(18, 8), (19, 8), (20, 9)])
-    return s.save("minh")
+    p = P()
+    p.brow = (28, 26, 38)
+    neck(p)
+    body(p, (86, 60, 128), collar=lambda q: [q.p(x, y, (156, 126, 196)) for y in range(38, 48) for x in (23 - (y - 38) // 2, 24 + (y - 38) // 2)]
+         or [q.p(x, y, (40, 30, 60)) for y in range(39, 48) for x in range(24 - (y - 38) // 2 + 1, 24 + (y - 38) // 2)])
+    face(p)
+    eyes(p, iris=(56, 40, 36))
+    nose_mouth(p)
+    hair = (28, 26, 38)
+    hair_cap(p, hair, lambda x: 15 + (0, 2, 3, 1, 0, 2)[x % 6] + (5 if x < 14 or x > 33 else 0), top=6, spread=15.5, side_to=25)
+    for x, h in ((17, 3), (21, 2), (26, 3), (30, 2)):  # tóc dựng
+        for k in range(h):
+            p.p(x, 5 - k, hair)
+            p.p(x + 1, 6 - k, hair)
+    p.outline()
+    return p.img
 
 
 def vy():
-    s = P()
-    coat = (232, 182, 52, 255)
-    s.shoulders(coat)
-    s.rect(23, 39, 24, 47, shade(coat, 0.8))            # khóa áo
-    s.head(jaw=1)
-    s.eyes(); s.nose_mouth("smile"); s.blush()
-    hair = (78, 46, 34, 255)
-    hair_cap(s, hair, side_to=33, fringe=[(13, 34, 16)])  # tóc bob mái bằng
-    s.rect(10, 18, 12, 33, hair); s.rect(35, 18, 37, 33, hair)
-    s.rect(37, 12, 40, 22, hair)                          # đuôi tóc nhỏ
-    s.rect(36, 11, 37, 12, (220, 70, 60, 255))
-    s.brows(shade(hair, 0.8))
-    shine(s, hair, [(17, 8), (18, 8), (19, 8), (16, 9)])
-    return s.save("vy")
+    p = P()
+    p.brow = (150, 64, 36)
+    hair = (196, 86, 46)
+    back_hair(p, hair, 42, 15, 18)
+    neck(p)
+    body(p, (234, 182, 52), collar=lambda q: [q.p(x, 38, (250, 236, 196)) for x in range(19, 29)])
+    face(p)
+    eyes(p, iris=(96, 64, 40))
+    nose_mouth(p)
+    hair_cap(p, hair, lambda x: (17 + (1 if x % 3 == 0 else 0)) if 14 <= x <= 33 else 34, top=7, spread=15.5, side_to=34)
+    for y in range(17, 36):  # tóc hai bên mặt
+        for x in (12, 13, 14):
+            p.p(x, y, hair if x < 14 else shade(hair, 0.8))
+        for x in (33, 34, 35):
+            p.p(x, y, shade(hair, 0.62))
+    p.rect(33, 13, 35, 14, (70, 140, 210))  # kẹp tóc
+    p.outline()
+    return p.img
 
 
 def lan():
-    s = P()
-    ao = (62, 120, 84, 255)
-    s.shoulders(ao)
-    s.span(38, 19, 28, shade(ao, 1.2))                   # cổ áo bà ba
-    s.head(jaw=1)
-    s.eyes(); s.nose_mouth("flat"); s.blush()
-    hair = (24, 22, 28, 255)
-    hair_cap(s, hair, side_to=26, fringe=[(13, 22, 15), (26, 34, 15)])
-    s.rect(32, 26, 35, 46, hair)                          # bím tóc vắt trước vai
-    for y in range(28, 46, 3):
-        s.span(y, 32, 35, shade(hair, 1.6))
-    s.rect(32, 44, 35, 45, (200, 60, 60, 255))
-    s.brows(hair)
-    hat = (226, 206, 150, 255)                            # nón lá đội lệch ra sau
-    for i, y in enumerate(range(0, 10)):
-        half = 2 + i * 2 + (i // 2)
-        s.span(y, 24 - half, 23 + half, hat)
-    for y in range(0, 10, 2):
-        s.span(y, 24 - (2 + y * 2), 23 + (2 + y * 2), shade(hat, 0.9))
-    s.span(9, 2, 45, shade(hat, 0.82))
-    return s.save("lan")
+    p = P()
+    p.brow = (24, 22, 30)
+    hair = (24, 22, 30)
+    back_hair(p, hair, 36, 14, 15)
+    neck(p)
+    body(p, (62, 124, 88), collar=lambda q: [q.p(x, 38, (40, 90, 60)) for x in range(18, 30)]
+         + [q.p(24, y, (196, 186, 140)) for y in (41, 44)])
+    face(p)
+    eyes(p, iris=(40, 30, 30))
+    nose_mouth(p)
+    hair_cap(p, hair, lambda x: 14 + abs(x - 24) // 2 if 13 <= x <= 34 else 30, top=8, spread=15, side_to=30)
+    for y in range(28, 46):  # bím tóc vắt trước vai phải
+        x = 32 + (1 if y % 4 < 2 else 0)
+        p.p(x, y, hair)
+        p.p(x + 1, y, shade(hair, 0.7) if y % 2 else hair)
+    p.rect(32, 44, 34, 45, (214, 60, 60))
+    p.outline()
+    return p.img
 
 
 def tuan():
-    s = P()
-    shirt, tie = (236, 236, 242, 255), (150, 34, 44, 255)
-    s.shoulders(shirt)
-    s.rect(22, 39, 25, 47, tie); s.rect(23, 38, 24, 38, tie)
-    s.p(21, 39, tie)                                       # cà vạt nới lệch
-    s.head(jaw=0)
-    s.eyes(look=1); s.nose_mouth("smirk")
-    hair = (40, 30, 26, 255)
-    hair_cap(s, hair, side_to=19)
-    s.rect(13, 12, 20, 15, hair)                          # tóc vuốt rẽ ngôi lệch
-    s.rect(21, 11, 34, 13, hair)
-    s.brows(hair, angry=True)
-    shine(s, hair, [(17, 8), (18, 8), (19, 8), (20, 8), (21, 9)])
-    return s.save("tuan")
+    p = P()
+    p.brow = (48, 36, 30)
+    neck(p)
+
+    def suit(q):
+        for y in range(37, 48):
+            w = 2 + (y - 37) // 2
+            for x in range(24 - w, 24 + w):
+                q.p(x, y, (240, 240, 244))
+        for y in range(38, 48):
+            for x in (23, 24):
+                q.p(x, y, (170, 36, 48) if y > 38 else (130, 26, 36))
+        for y in range(38, 48):
+            q.p(24 - 2 - (y - 37) // 2, y, (40, 42, 56))
+            q.p(24 + 1 + (y - 37) // 2, y, (40, 42, 56))
+    body(p, (62, 66, 84), collar=suit)
+    face(p)
+    eyes(p, iris=(60, 44, 36))
+    nose_mouth(p)
+    hair = (48, 36, 30)
+    hair_cap(p, hair, lambda x: (15 if x < 26 else 13) + (4 if x < 14 or x > 33 else 0), top=7, spread=15, side_to=22, seed=4)
+    for x in range(14, 27):  # đường rẽ ngôi, tóc vuốt
+        p.p(x, 13 - (x - 14) // 5, mix(hair, (255, 230, 200), 0.3))
+    p.outline()
+    return p.img
 
 
 def khoa():
-    s = P()
-    shirt, strap = (138, 128, 82, 255), (60, 50, 40, 255)
-    s.shoulders(shirt, wide=2)
-    s.rect(13, 40, 14, 47, strap); s.rect(33, 40, 34, 47, strap)
-    s.head(jaw=-1)
-    s.eyes(); s.nose_mouth("smile")
-    frame = (20, 20, 24, 255)                            # kính gọng đen
-    for x0 in (15, 26):
-        s.rect(x0, 19, x0 + 5, 24, frame)
-        s.rect(x0 + 1, 20, x0 + 4, 23, (176, 206, 224, 255))
-        s.rect(x0 + 2, 21, x0 + 3, 22, EYE)
-        s.p(x0 + 1, 20, WHITE)
-    s.span(21, 21, 25, frame)
-    hair = (30, 28, 30, 255)
-    hair_cap(s, hair, side_to=19, fringe=[(13, 34, 14)])
-    s.brows(hair, y=17)
-    shine(s, hair, [(18, 8), (19, 8)])
-    return s.save("khoa")
+    p = P()
+    p.brow = (30, 28, 34)
+    neck(p)
+    body(p, (120, 118, 70), collar=lambda q: [q.p(x, y, (92, 90, 52)) for y in range(37, 41) for x in range(16 + (y - 37), 20 + (y - 37))]
+         + [q.p(x, y, (92, 90, 52)) for y in range(37, 41) for x in range(28 - (y - 37), 32 - (y - 37))]
+         + [q.p(x, y, (110, 84, 56)) for y in range(40, 48) for x in (12, 13, 34, 35)])
+    face(p)
+    eyes(p, iris=(50, 40, 34))
+    nose_mouth(p)
+    hair = (30, 28, 34)
+    hair_cap(p, hair, lambda x: 16 + (4 if x < 14 or x > 33 else 0) + (1 if x % 3 == 0 else 0), top=7, spread=15, side_to=22, seed=5)
+    glasses(p, (120, 104, 88))
+    p.outline()
+    return p.img
 
 
 def phong():
-    s = P()
-    shirt = (58, 46, 44, 255)
-    s.shoulders(shirt)
-    s.span(38, 18, 29, shade(shirt, 1.3))
-    s.head()
-    s.eyes(tired=True, look=-1); s.nose_mouth("flat")
-    corrupt = (100, 54, 126, 255)                         # vệt tha hóa lan từ cổ lên má phải
-    for x, y in ((29, 38), (30, 36), (31, 35), (31, 33), (32, 31), (33, 29), (33, 27), (34, 26), (28, 39), (30, 34)):
-        s.p(x, y, corrupt)
-    s.p(32, 30, shade(corrupt, 1.4)); s.p(31, 34, shade(corrupt, 1.4))
-    hair = (22, 20, 26, 255)
-    hair_cap(s, hair, side_to=22, fringe=[(14, 20, 16)])
-    s.rect(24, 12, 35, 24, hair)                          # mái dài che mắt phải
-    s.rect(26, 25, 29, 26, hair); s.p(33, 25, hair)
-    s.span(18, 16, 19, hair)
-    shine(s, hair, [(18, 8), (19, 8)])
-    beads = (150, 96, 48, 255)                            # chuỗi hạt quấn cổ
-    for x in range(17, 31, 2):
-        s.p(x, 40 + (1 if 20 < x < 28 else 0), beads)
-    return s.save("phong")
+    p = P((228, 190, 162))
+    p.brow = (20, 18, 24)
+    hair = (20, 18, 24)
+    back_hair(p, hair, 38, 15, 16)
+    neck(p)
+    body(p, (58, 46, 44))
+    face(p)
+    eyes(p, iris=(40, 30, 34))
+    for x in range(16, 22):  # quầng thâm
+        p.p(x, 24, shade(p.skin, 0.8))
+    nose_mouth(p, mood="sad")
+    hair_cap(p, hair, lambda x: 16 if x < 23 else 27 - abs(x - 30) // 2, top=7, spread=15.5, side_to=30, seed=6)
+    for (x, y) in ((27, 34), (28, 35), (27, 36), (26, 37), (28, 37), (29, 36), (25, 38), (30, 38)):  # vết tha hoá
+        p.p(x, y, (112, 60, 148))
+    p.outline()
+    return p.img
 
 
-def hai():
-    s = P(skin=(204, 206, 196, 255))
-    shirt = (226, 232, 236, 255)
-    s.shoulders(shirt)
-    s.span(38, 18, 29, (250, 250, 252, 255))
-    s.p(15, 42, (200, 40, 40, 255)); s.rect(30, 41, 33, 41, (60, 90, 160, 255))   # phù hiệu, tên trường
-    s.head(jaw=1)
-    for x0 in (16, 27):                                   # mắt đen đặc, không tròng trắng
-        s.rect(x0, 20, x0 + 3, 23, (14, 14, 20, 255))
-    s.nose_mouth("flat")
-    hair = (24, 28, 34, 255)
-    hair_cap(s, hair, side_to=30)
-    for i, x in enumerate(range(14, 34, 2)):              # mái bết thành sợi dài ngắn
-        s.rect(x, 12, x, 16 + (i * 3) % 6, hair)
-    s.rect(11, 22, 12, 32, hair); s.rect(35, 22, 36, 32, hair)
-    water = (120, 180, 210, 255)
-    for x, y in ((14, 30), (33, 28), (20, 35), (13, 34)):
-        s.p(x, y, water)
-    shine(s, hair, [(18, 8), (20, 8)])
-    return s.save("hai")
-
-
-def hai_tha_hoa():
-    s = P(skin=(150, 160, 170, 255))
-    shirt = (120, 130, 140, 255)
-    s.shoulders(shirt)
-    s.head(jaw=2)
-    for x0 in (16, 27):                                   # hốc mắt sâu, đồng tử đỏ
-        s.rect(x0 - 1, 19, x0 + 4, 24, (10, 8, 14, 255))
-        s.p(x0 + 2, 21, (240, 40, 40, 255))
-    s.rect(20, 28, 27, 32, (20, 6, 12, 255))              # miệng há rộng
-    for x in (21, 23, 25, 27):
-        s.p(x, 28, (220, 214, 200, 255))
-    vein = (70, 40, 110, 255)
-    for x, y in ((14, 26), (15, 28), (16, 30), (33, 25), (32, 27), (31, 29), (30, 31)):
-        s.p(x, y, vein)
-    hair = (12, 14, 20, 255)
-    hair_cap(s, hair, side_to=40)
-    s.rect(9, 18, 12, 44, hair); s.rect(35, 18, 38, 44, hair)
-    for i, x in enumerate(range(13, 35, 2)):
-        s.rect(x, 12, x, 17 + (i * 5) % 7, hair)
-    for x, y in ((10, 46), (37, 45), (12, 47)):
-        s.p(x, y, (120, 180, 210, 255))
-    return s.save("hai_tha_hoa")
+def hai(corrupt=False):
+    skin = (150, 164, 176) if corrupt else (198, 208, 204)
+    p = P(skin)
+    p.brow = (22, 28, 36)
+    hair = (14, 16, 22) if corrupt else (22, 28, 36)
+    if corrupt:
+        back_hair(p, hair, 46, 16, 20)
+    neck(p)
+    body(p, (60, 66, 80) if corrupt else (222, 230, 234),
+         collar=None if corrupt else (lambda q: [q.p(x, 38, (200, 208, 214)) for x in range(18, 30)]
+                                      + [q.p(x, 41, (60, 90, 160)) for x in range(28, 32)] + [q.p(17, 42, (200, 40, 40))]))
+    face(p)
+    eyes(p, hollow=True, red=corrupt)
+    nose_mouth(p, mood="sad", open_mouth=corrupt)
+    hair_cap(p, hair, lambda x: 15, top=8, spread=15, side_to=33 if corrupt else 26, highlight=False, seed=7)
+    for x in range(14, 34, 2):  # tóc bết thành sợi
+        for y in range(15, 19 + (x * 7) % 5):
+            p.p(x, y, hair)
+    rnd = random.Random(1)
+    for _ in range(8):  # giọt nước
+        p.p(rnd.randint(12, 36), rnd.randint(24, 40), (140, 200, 230))
+    if corrupt:
+        for (x, y) in ((15, 25), (14, 27), (15, 29), (32, 26), (33, 28), (31, 30)):
+            p.p(x, y, (112, 60, 148))
+    p.outline()
+    return p.img
 
 
 def ong_cu():
-    s = P(skin=(222, 182, 146, 255))
-    jacket = (70, 60, 56, 255)
-    s.shoulders(jacket)
-    s.span(38, 18, 29, shade(jacket, 1.3))
-    s.head(jaw=0)
-    s.eyes(y=22, closed=False)
-    for x0 in (16, 27):                                   # nếp nhăn đuôi mắt, bọng mắt
-        s.span(25, x0, x0 + 3, s.skin_sh)
-    s.p(15, 22, s.skin_sh); s.p(32, 22, s.skin_sh)
-    s.nose_mouth("frown", y=31)
-    s.span(28, 18, 20, s.skin_sh); s.span(28, 27, 29, s.skin_sh)   # nếp má
-    hair = (196, 196, 200, 255)                           # tóc bạc thưa, trán hói
-    s.rect(11, 12, 14, 24, hair); s.rect(33, 12, 36, 24, hair)
-    s.span(9, 18, 29, hair); s.span(10, 15, 17, hair); s.span(10, 30, 32, hair)
-    s.brows((220, 220, 224, 255), y=19, sad=True)
-    s.rect(21, 32, 26, 34, (210, 210, 214, 255))          # râu cằm
-    s.rect(22, 35, 25, 36, (210, 210, 214, 255))
-    return s.save("ong_cu")
+    p = P((222, 180, 144))
+    p.brow = (200, 200, 206)
+    neck(p)
+    body(p, (86, 70, 58), collar=lambda q: [q.p(x, 37, (110, 92, 76)) for x in range(17, 31)]
+         + [q.p(24, y, (180, 160, 110)) for y in (41, 44, 47)])
+    face(p)
+    eyes(p, iris=(70, 56, 46))
+    nose_mouth(p)
+    for y in (12, 14):  # nếp nhăn trán
+        for x in range(18, 30):
+            if (x + y) % 3:
+                p.p(x, y, p.sh)
+    for x in (16, 31):
+        p.p(x, 24, p.sh2)
+    grey = (196, 196, 202)
+    for y in range(13, 26):  # tóc bạc hai bên, đỉnh hói
+        for x in (11, 12, 13, 14):
+            p.p(x, y, grey if (x + y) % 3 else shade(grey, 0.8))
+        for x in (33, 34, 35, 36):
+            p.p(x, y, shade(grey, 0.82) if (x + y) % 3 else shade(grey, 0.68))
+    beard = (226, 226, 230)
+    for y in range(28, 40):  # râu
+        half = 6 - max(0, y - 34)
+        for x in range(24 - half, 24 + half):
+            p.p(x, y, beard if x < 25 else shade(beard, 0.85))
+    p.rect(19, 28, 28, 29, shade(beard, 0.92))  # ria
+    p.outline()
+    return p.img
 
 
-ALL = [("Minh", minh), ("Vy", vy), ("Lan", lan), ("Tuấn", tuan), ("Khoa", khoa), ("Phong", phong),
-       ("Hải", hai), ("Hải (tha hóa)", hai_tha_hoa), ("Ông cụ", ong_cu)]
+PORTRAITS = [("minh", "Minh", minh), ("vy", "Vy", vy), ("lan", "Lan", lan), ("tuan", "Tuấn", tuan),
+             ("khoa", "Khoa", khoa), ("phong", "Phong", phong), ("hai", "Hải", lambda: hai(False)),
+             ("hai_tha_hoa", "Hải (tha hóa)", lambda: hai(True)), ("ong_cu", "Ông cụ", ong_cu)]
 
-if __name__ == "__main__":
-    scale, cell, cols = 5, 260, 5
-    rows = (len(ALL) + cols - 1) // cols
-    sheet = Image.new("RGBA", (cols * cell + 20, rows * (N * scale + 60) + 20), (30, 30, 40, 255))
+
+def main():
+    imgs = []
+    for key, label, fn in PORTRAITS:
+        im = fn()
+        im.save(os.path.join(OUT, key + ".png"))
+        imgs.append((label, im))
+    sc, pad = 5, 16
+    cw = N * sc
+    sheet = Image.new("RGBA", (5 * (cw + pad) + pad, 2 * (cw + 46) + pad), (30, 30, 40, 255))
     d = ImageDraw.Draw(sheet)
     try:
-        font = ImageFont.truetype("/usr/share/fonts/truetype/dejavu/DejaVuSans-Bold.ttf", 18)
+        font = ImageFont.truetype("C:/Windows/Fonts/arialbd.ttf", 20)
     except OSError:
         font = ImageFont.load_default()
-    for i, (label, fn) in enumerate(ALL):
-        im = fn()
-        x = 10 + (i % cols) * cell + (cell - N * scale) // 2
-        y = 10 + (i // cols) * (N * scale + 60)
-        frame = Image.new("RGBA", (N * scale, N * scale), (52, 50, 66, 255))
-        frame.alpha_composite(im.resize((N * scale, N * scale), Image.NEAREST))
-        sheet.alpha_composite(frame, (x, y))
+    for i, (label, im) in enumerate(imgs):
+        x, y = pad + (i % 5) * (cw + pad), pad + (i // 5) * (cw + 46)
+        d.rectangle((x, y, x + cw, y + cw), fill=(52, 48, 64))
+        sheet.alpha_composite(im.resize((cw, cw), Image.NEAREST), (x, y))
         tw = d.textlength(label, font=font)
-        d.text((x + (N * scale - tw) / 2, y + N * scale + 12), label, fill=(240, 230, 210), font=font)
-    sheet.save(os.path.join(ROOT, "sprites", "_portraits_preview.png"))
-    print("done")
+        d.text((x + (cw - tw) / 2, y + cw + 8), label, fill=(240, 230, 210), font=font)
+    sheet.save(os.path.join(PREVIEW, "_portraits_preview.png"))
+
+
+if __name__ == "__main__":
+    main()
+    print("done →", OUT)

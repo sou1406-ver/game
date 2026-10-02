@@ -330,7 +330,7 @@ namespace KyUc
 
             float viewW = Screen.width / (float)k, viewH = Screen.height / (float)k;
             var view = new Rect(cam.x - worldOff.x - 8, cam.y - worldOff.y - 8, viewW + 16, viewH + 16);
-            var playerBox = new Rect(pos.x - 8, pos.y - 24, 16, 24);
+            var playerBox = new Rect(pos.x - 8, pos.y - 32, 16, 32);
             drawList.Clear();
 
             float aw = map.atlas.width, ah = map.atlas.height;
@@ -513,7 +513,7 @@ namespace KyUc
         {
             string p = PromptText();
             if (p == null) return;
-            var head = ScreenRect(pos.x, pos.y - 30, 0, 0);
+            var head = ScreenRect(pos.x, pos.y - 38, 0, 0);
             var content = new GUIContent("E  " + p);
             var size = label.CalcSize(content);
             float bob = Mathf.Round(Mathf.Sin(Time.time * 5f)) * 2f;
@@ -732,7 +732,7 @@ namespace KyUc
                 var face = Tex("Portraits/" + BattleController.SpriteKey(f));
                 if (face != null) GUI.DrawTexture(new Rect(c.center.x - 48, c.y + 10, 96, 96), face, ScaleMode.ScaleToFit);
                 var walk = Tex("Walk/" + BattleController.SpriteKey(f) + "_down_" + (on ? (int)(Time.time * 4f) % 3 : 0));
-                if (walk != null) GUI.DrawTexture(new Rect(c.center.x - 16, c.y + 110, 32, 48), walk);
+                if (walk != null) GUI.DrawTexture(new Rect(c.center.x - 12, c.y + 108, 24, 48), walk);
                 var size = header.CalcSize(new GUIContent(f));
                 GUI.Label(new Rect(c.center.x - size.x / 2f, c.y + 164, size.x, 24), f, header);
                 if (GUI.Button(c, GUIContent.none, GUIStyle.none))

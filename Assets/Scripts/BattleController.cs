@@ -709,7 +709,7 @@ namespace KyUc
                 int back = n - 1 - i;
                 return new Vector2(cx - 42 - back * 30, GroundY + (back % 2) * 8);
             }
-            return new Vector2(cx + 42 + i * 36, GroundY + (i % 2) * 8);
+            return new Vector2(cx + 48 + i * 46, GroundY + (i % 2) * 8);
         }
 
         Rect ViewToScreen(Rect r)
@@ -750,7 +750,7 @@ namespace KyUc
             EnsureStyles();
             HandleKeys();
             guiS = Screen.height / 720f;
-            px = Mathf.Max(1, Mathf.RoundToInt(Screen.height / 180f)); // sân trận cao ~180 pixel: nhân vật to hơn ngoài làng
+            px = Mathf.Max(1, Mathf.RoundToInt(Screen.height / 200f)); // sân trận cao ~200 pixel: nhân vật to hơn ngoài làng
             viewW = Screen.width / (float)px;
             viewH = Screen.height / (float)px;
 
@@ -986,7 +986,7 @@ namespace KyUc
                 DrawSquare(r, c.Color);
                 return;
             }
-            float frac = c.IsAlly ? 13f / 24f : 0.6f;
+            float frac = c.IsAlly ? 12f / 32f : 0.6f;
             var uv = new Rect(0, 1f - frac, 1, frac);
             float aspect = t.width / (t.height * frac);
             float hh = r.height, ww = hh * aspect;
