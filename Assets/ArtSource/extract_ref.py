@@ -380,12 +380,16 @@ def build_hires():
         if "_hires_" not in f or not f.endswith(".png"):
             continue
         name, d = f[:-4].split("_hires_")
-        if d not in HIRES_DIRS:
-            continue
         img = Image.open(os.path.join(REF, f)).convert("RGBA")
         img = img.crop(img.getbbox())
         c = Image.new("RGBA", (img.width + 2, img.height + 1), (0, 0, 0, 0))
         c.alpha_composite(img, (1, 0))
+        if d.startswith("battle_"):  # <tên>_hires_battle_<0|1|atk|hurt>.png → Battle/<tên>_<tư thế>.png
+            c.save(os.path.join(RES, "Battle", "%s_%s.png" % (name, d[len("battle_"):])))
+            done.append((name, d))
+            continue
+        if d not in HIRES_DIRS:
+            continue
         for i in range(3):
             c.save(os.path.join(out_dir, "%s_%s_%d.png" % (name, d, i)))
             if d == "left" and not os.path.exists(os.path.join(REF, "%s_hires_right.png" % name)):
