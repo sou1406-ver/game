@@ -28,7 +28,12 @@ def dist(a, b):
 
 def cut(src, box, tol=26):
     """Cắt vùng box, xoá nền bằng loang màu từ mép vào. Trả về RGBA đã thu gọn sát hình."""
-    img = sheet(src).crop(box)
+    return flood_cut(sheet(src).crop(box), tol)
+
+
+def flood_cut(img, tol=26):
+    """Xoá nền một màu bất kỳ bằng loang từ mép vào (dùng khi AI không ra nền magenta)."""
+    img = img.convert("RGB")
     w, h = img.size
     px = img.load()
     border = [px[x, 0] for x in range(w)] + [px[x, h - 1] for x in range(w)] + \
@@ -276,20 +281,25 @@ def magenta_cut(img):
     return out.crop(bbox) if bbox else out
 
 
-def sheet_cells(path, cols, rows, inset=8):
-    """Chia ảnh thành lưới cols x rows, lùi vào mỗi ô `inset` pixel để bỏ đường kẻ giữa ô."""
+def sheet_cells(path, cols, rows, inset=8, bg="magenta"):
+    """Chia ảnh thành lưới cols x rows, lùi vào mỗi ô `inset` pixel để bỏ đường kẻ giữa ô.
+    bg: "magenta" (chroma-key) hoặc "flood" (nền một màu khác, loang từ mép)."""
     img = Image.open(path).convert("RGB")
     cw, ch = img.width / cols, img.height / rows
     cells = []
     for r in range(rows):
         for c in range(cols):
             box = (int(c * cw + inset), int(r * ch + inset), int((c + 1) * cw - inset), int((r + 1) * ch - inset))
-            cells.append(magenta_cut(img.crop(box)))
+            cells.append(magenta_cut(img.crop(box)) if bg == "magenta" else flood_cut(img.crop(box), 30))
     return cells
 
 
 BATTLE_H = 56   # chiều cao người trong trận (pixel trận)
 BATTLE_POSES = ["0", "1", "atk", "hurt"]  # 4 ô của prompt B: thủ thế, thở, đánh, trúng đòn
+# tấm nào AI không ra đúng lưới 2x2 nền magenta thì khai báo ở đây (thứ tự ô vẫn: thủ thế, thở, đánh, trúng đòn)
+BATTLE_LAYOUT = {
+    "tuan": dict(cols=4, rows=1, inset=2, bg="flood"),
+}
 
 
 def build_battle_sheets():
@@ -299,7 +309,9 @@ def build_battle_sheets():
         if not f.endswith("_battle.png"):
             continue
         name = f[:-len("_battle.png")]
-        cells = sheet_cells(os.path.join(REF, f), 2, 2)
+        lay = BATTLE_LAYOUT.get(name, {})
+        cells = sheet_cells(os.path.join(REF, f), lay.get("cols", 2), lay.get("rows", 2), lay.get("inset", 8),
+                            lay.get("bg", "magenta"))
         # cùng một tỉ lệ thu cho cả 4 ô (theo ô thủ thế) để người không to nhỏ khác nhau
         scale = BATTLE_H / cells[0].height
         frames = [pixelize(c, max(8, round(c.height * scale)), colors=32) for c in cells]
