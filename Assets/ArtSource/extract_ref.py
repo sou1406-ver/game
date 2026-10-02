@@ -368,6 +368,32 @@ def build_walk_sheets():
     return rows_out
 
 
+# Sprite pixel art thật, nền trong suốt (làm bằng công cụ pixel art ngoài): reference/<tên>_hires_<hướng>.png.
+# Không thu nhỏ: chỉ cắt sát hình, chừa 1 pixel đáy; game tự phóng theo bội số nguyên. Thiếu khung bước thì dùng chung khung đứng.
+HIRES_DIRS = ("down", "up", "left", "right")
+
+
+def build_hires():
+    out_dir = os.path.join(RES, "Walk")
+    done = []
+    for f in sorted(os.listdir(REF)):
+        if "_hires_" not in f or not f.endswith(".png"):
+            continue
+        name, d = f[:-4].split("_hires_")
+        if d not in HIRES_DIRS:
+            continue
+        img = Image.open(os.path.join(REF, f)).convert("RGBA")
+        img = img.crop(img.getbbox())
+        c = Image.new("RGBA", (img.width + 2, img.height + 1), (0, 0, 0, 0))
+        c.alpha_composite(img, (1, 0))
+        for i in range(3):
+            c.save(os.path.join(out_dir, "%s_%s_%d.png" % (name, d, i)))
+            if d == "left" and not os.path.exists(os.path.join(REF, "%s_hires_right.png" % name)):
+                mirror(c).save(os.path.join(out_dir, "%s_right_%d.png" % (name, i)))
+        done.append((name, d))
+    return done
+
+
 def preview(walk_rows, portraits, enemies):
     sc = 5
     W = max(len(r) for r in walk_rows) * (WALK_CW * sc + 6) + 20
@@ -391,6 +417,7 @@ def preview(walk_rows, portraits, enemies):
 if __name__ == "__main__":
     w = build_walk()
     w += build_walk_sheets()  # bảng đi lại mới ghi đè bản cắt từ ảnh tham chiếu cũ
+    build_hires()  # sprite pixel art thật ghi đè sau cùng
     p = build_portraits()
     e = build_enemies()
     preview(w, p, e)

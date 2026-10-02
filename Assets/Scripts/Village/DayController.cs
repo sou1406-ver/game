@@ -381,13 +381,27 @@ namespace KyUc
             DrawDaylight();
         }
 
+        // Khung người trên map (đơn vị pixel map). Sprite thường (cao ~36) vẽ cùng tỉ lệ với map;
+        // sprite pixel art độ phân giải cao được thu theo bội số nguyên pixel màn hình để vẫn nét và cao xấp xỉ 36 pixel map.
+        Rect ActorRect(Texture2D tex, Vector2 feet)
+        {
+            float scale = 1f; // pixel map cho 1 pixel ảnh
+            if (tex.height > 48)
+            {
+                int sa = Mathf.Max(1, Mathf.RoundToInt(k * 36f / tex.height)); // pixel màn hình cho 1 pixel ảnh
+                scale = sa / (float)k;
+            }
+            float w = tex.width * scale, h = tex.height * scale;
+            return new Rect(feet.x - w / 2f, feet.y - h + 1, w, h);
+        }
+
         void AddActor(string name, int dir, int frame, Vector2 feet)
         {
             var tex = Tex("Walk/" + BattleController.SpriteKey(name) + "_" + Dirs[dir] + "_" + frame);
             if (tex == null) return;
             drawList.Add(new Drawable
             {
-                b = feet.y, tex = tex, world = new Rect(feet.x - tex.width / 2f, feet.y - tex.height + 1, tex.width, tex.height),
+                b = feet.y, tex = tex, world = ActorRect(tex, feet),
                 alpha = 1f, shadow = true
             });
         }
@@ -732,7 +746,7 @@ namespace KyUc
                 var face = Tex("Portraits/" + BattleController.SpriteKey(f));
                 if (face != null) GUI.DrawTexture(new Rect(c.center.x - 48, c.y + 10, 96, 96), face, ScaleMode.ScaleToFit);
                 var walk = Tex("Walk/" + BattleController.SpriteKey(f) + "_down_" + (on ? (int)(Time.time * 4f) % 3 : 0));
-                if (walk != null) GUI.DrawTexture(new Rect(c.center.x - 16, c.y + 108, 32, 48), walk);
+                if (walk != null) GUI.DrawTexture(new Rect(c.center.x - 16, c.y + 108, 32, 48), walk, ScaleMode.ScaleToFit);
                 var size = header.CalcSize(new GUIContent(f));
                 GUI.Label(new Rect(c.center.x - size.x / 2f, c.y + 164, size.x, 24), f, header);
                 if (GUI.Button(c, GUIContent.none, GUIStyle.none))
