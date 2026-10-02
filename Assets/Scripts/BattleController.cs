@@ -60,7 +60,7 @@ namespace KyUc
             if (party == null || party.Length == 0) party = new CharacterData[3];
             //                                   tên     màu                              HP Công Thủ Crit Tốc Né Luck kháng
             if (party.Length > 0 && party[0] == null)
-                party[0] = CharacterData.Create("Vy", new Color(0.95f, 0.45f, 0.45f), 22, 4, 2, 10, 12, 10, 3, 0f,
+                party[0] = CharacterData.Create("Vy", new Color(0.95f, 0.45f, 0.45f), 22, 4, 2, 10, 12, 10, 3, 0.05f,
                     "Phá đòn", SkillType.CancelIntent, 0f, "Kiểm soát · Phá đòn");
             if (party.Length > 1 && party[1] == null) // luật đọc văn tự chưa có trong GDD: tạm vẫn là đòn mạnh x2
                 party[1] = CharacterData.Create("Tuấn", new Color(0.85f, 0.2f, 0.2f), 26, 7, 2, 15, 9, 5, 2, 0f,

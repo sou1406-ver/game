@@ -50,33 +50,43 @@ Chủ đề: quỷ không thắng bằng sức mạnh, mà bằng chính ký ứ
 
 Năm người chơi được, mỗi đêm ra trận 3. Hải và Phong không chơi được. Lỗi của mỗi người đều là thật; quỷ không nói dối, chỉ khuếch đại.
 
-Ngoại hình → nghề → tính cách → vai trò trong trận phải nối với nhau, không phải "class RPG mặc lên nhân vật". Mỗi người là một cách phản ứng với đêm Hải chết: **chạy trốn, tức giận, che giấu, phủ nhận, chịu đựng**. Chủ đề không chỉ là "ai giết Hải" mà là 5 người phải đối diện với cách chính mình đã xử lý đêm đó.
-
-| Nhân vật | Bề ngoài & nghề | Vết thương tâm lý | Trong trận | Cách đối diện quá khứ | Vai trong truyện |
+| Nhân vật | Bề ngoài và nghề | Vết thương tâm lý | Combat | Phản ứng với quá khứ | Khúc mắc |
 |---|---|---|---|---|---|
-| Minh | Thợ xăm tự do; khép kín, mất ngủ, quầng thâm mắt, chuông đồng trước ngực | Mặc cảm vì đã bỏ chạy đêm Hải mất | Hầu đồng / biến luật | **Chạy trốn**: dùng tiếng máy xăm át đi những tiếng thì thầm mà Minh không biết là của mình hay của cõi âm | Người từng **thấy** |
-| Vy | Thợ sửa xe; gai góc, nóng nảy; tóc ngắn nhuộm nâu đỏ/cam đồng, chân tóc đen mọc ra rõ; đeo chiếc chuông nhỏ là kỷ vật của Hải | Cãi nhau, trù ẻo anh trai trước khi anh chết | Kiểm soát / phá đòn | **Tức giận**: dùng hung hăng làm giáp, tìm người để đổ lỗi | Người muốn **trả thù** |
-| Tuấn | Nhân viên văn phòng thất nghiệp; thư sinh, áo gile, vẫn đeo thẻ nhân viên công ty cũ để giữ thể diện | Sợ thất bại, túng quẫn, giấu nợ và thói xấu cũ | Sát thương / đọc văn tự | **Che giấu**: dựng vỏ bọc thành đạt, dễ sụp khi bị bóc trần | Người muốn **che giấu** |
-| Khoa | Thợ cơ khí xưởng máy; cơ bắp, kính cận, bút cài tai; thực tế, thẳng thắn, ít vòng vo, rất khó bị lay chuyển bởi thứ không kiểm chứng được | Bị bạn lừa tiền; chán ghét sự nhập nhằng, dối trá | Đỡ đòn / kháng Âm khí | **Phủ nhận**: bám chặt vào công cụ và những gì kiểm chứng được | Người **không tin** |
-| Lan | Làm ruộng, bán thuốc nam, chăm mẹ già; mệt mỏi, cam chịu | Oán hận âm thầm vì cả nhóm bỏ mình lại ở quê | Hồi phục / giảm Âm khí | **Chịu đựng**: gánh ký ức, làm nhân chứng cho nỗi đau của Phong | Người **ở lại** |
-| Phong | Con nhà thủ nhang giữ điện Thoải phủ và phong ấn bên trong, có căn từ nhỏ, bị làng xa lánh, ở lại giữ điện | Hận cả nhóm vì bị bỏ rơi; ân hận vì không cứu Hải | Không chơi được | **Không thể buông bỏ**: chìm vào nó, sống như một cái bóng suốt 10 năm, tự trừng phạt | Tấm gương phản chiếu tội lỗi của cả 5 |
-| Hải | Bộ mặt của thực thể | Giận dỗi bỏ nhóm, bị thực thể kéo chết rồi tha hóa; giận cả nhóm, chưa giải | Không chơi được | | |
+| Minh | Thợ xăm tự do. Khép kín, mất ngủ, quầng thâm mắt | Mặc cảm vì đã bỏ chạy đêm Hải mất | Hầu đồng, đổi luật | **Chạy trốn**: dùng tiếng máy xăm át những tiếng thì thầm mà Minh không biết là của mình hay của cõi âm | Bề ngoài: bỏ làng vì sợ căn, sợ thành như Phong. Thật ra: Minh thấy Phong cố cứu Hải nhưng đã bỏ chạy, và chỉ còn nhớ "Phong đã ở đó" |
+| Vy | Em gái Hải, thợ sửa xe. Tóc ngắn nhuộm nâu đỏ/cam đồng, chân tóc đen mọc ra rõ; đeo chiếc chuông nhỏ, kỷ vật của Hải | Tự trách vì đã trù ẻo anh trai trước khi anh chết | Kiểm soát, phá đòn | **Tức giận**: dùng hung hăng làm giáp, tìm mục tiêu để đổ lỗi | Tin Phong đã giết anh mình |
+| Tuấn | Nhân viên văn phòng thất nghiệp. Áo gile, vẫn đeo thẻ nhân viên công ty cũ để giữ thể diện | Tự ti vì túng quẫn, giấu nợ và thói xấu cũ | Sát thương, đọc văn tự. Kháng Âm khí thấp nhất đội; các hiệu ứng gây ảo giác có xu hướng ưu tiên Tuấn | **Che giấu**: dựng vỏ bọc thành đạt, dễ sụp khi bị bóc trần | Vay tiền Khoa không trả |
+| Khoa | Thợ cơ khí xưởng máy. Cơ bắp, kính cận, cài bút sau tai. Thực tế, thẳng thắn, ít vòng vo, rất khó bị lay chuyển bởi những thứ không kiểm chứng được | Bị bạn lừa tiền, chán ghét sự nhập nhằng dối trá | Đỡ đòn. Kháng Âm khí cao nhờ luôn tập trung vào những gì kiểm chứng được, khiến ảo giác và thao túng tâm lý khó tác động | **Phủ nhận**: bám chặt vào công cụ, từ chối tin thứ vô hình | Chưa tha cho Tuấn |
+| Lan | Người duy nhất ở lại làng, làm ruộng, bán thuốc nam, chăm mẹ già. Dáng vẻ mỏi mòn, cam chịu | Oán hận âm thầm vì cả nhóm bỏ mình lại giữa làng mục rữa | Hồi phục, giảm Âm khí | **Chịu đựng**: gánh ký ức, làm nhân chứng cho nỗi đau của Phong | Trách cả nhóm bỏ đi, bỏ mặc Phong |
+| Phong | Con nhà thủ nhang giữ điện Thoải phủ và phong ấn bên trong, có căn từ nhỏ, bị làng xa lánh, ở lại giữ điện | Ân hận vì đã đứng nhìn mà không cứu được Hải | Không chơi được; bị nghi là phản diện | **Không thể buông bỏ**: chìm vào tội lỗi (xem dưới) | Hận cả nhóm vì bị bỏ rơi; ân hận vì không cứu Hải |
+| Hải | Bộ mặt của thực thể | Giận dỗi bỏ nhóm, bị thực thể kéo chết rồi tha hóa | Không chơi được | — | Giận cả nhóm, chưa giải |
 
-- **Minh và Phong đối xứng:** cả hai đều có căn; một người trốn khỏi nó, một người chìm vào nó. Phong không chạy được vì bị xích lại bởi căn đồng và ngôi điện hoang; không giận dữ, không thanh minh, không phủ nhận.
-- **Tuấn** không phải pháp sư nhưng là người đọc được văn tự cổ: người có học, đọc được bài cúng, nhưng chính trí tưởng tượng và nỗi sợ khiến Tuấn dễ nhìn gà hóa cuốc nhất.
-- **Khoa** không tin ma quỷ, nhưng không phải người đầu óc đơn giản. Não Khoa tự đóng lại trước những thứ phi logic, khiến Khoa thành "mỏ neo thực tế" giữ cho cả nhóm không phát điên.
-- **Lan** là trục cảm xúc: người duy nhất tin và mang cơm cho Phong suốt 10 năm, nhân chứng sống của 10 năm sau biến cố.
-- Quỷ không cần bịa ra gì. Nó chỉ cần giam 5 người quanh cái bóng của Phong, để 5 cách đối diện sai lầm tự cắn xé nhau cho tới khi cả nhóm tan rã lần thứ hai.
+**5 cách đối diện một vết thương:** Minh chạy trốn, Vy tức giận, Tuấn che giấu, Khoa phủ nhận, Lan chịu đựng. Truyện không chỉ là tìm ai giết Hải, mà là 5 người phải đối diện với cách chính mình đã xử lý đêm Hải chết.
+
+**Phong — kẻ không thể buông bỏ.** Phong là chiếc gương phản chiếu tội lỗi của cả 5:
+
+- Không chạy đi đâu được, vì bị xích lại bởi chính căn đồng và ngôi điện hoang.
+- Không giận dữ, không thanh minh, cũng không phủ nhận.
+- Chỉ chìm vào đó: tự trừng phạt bằng cách sống như một cái bóng suốt 10 năm, nhai đi nhai lại cảm giác tội lỗi vì đã đứng nhìn mà không cứu được bạn.
+
+Minh và Phong đều có căn: một người trốn khỏi nó, một người chìm vào nó. Con quỷ không cần bịa ra chuyện gì: nó chỉ cần giam 5 người quanh cái bóng của Phong, để 5 cách đối diện sai lầm đó tự cắn xé nhau cho đến khi cả nhóm tan rã lần thứ hai.
+
+Lan là trục cảm xúc: người duy nhất tin và mang cơm cho Phong suốt 10 năm. Mỗi người nhìn Phong một kiểu:
+
+- Vy: Phong là kẻ giết Hải.
+- Minh: Phong đáng sợ, vì Minh từng thấy thứ gì đó.
+- Tuấn: Phong biết bí mật của mình.
+- Khoa: Phong nói chuyện ma quỷ vô lý.
+- Lan: "Tao không biết chuyện đêm đó. Nhưng tao biết Phong không phải thứ chúng mày đang nghĩ."
 
 **Chia phe sau khi Phong bị nghi**
 
-| Nhân vật | Phe | Lý do | Nhìn Phong |
-|---|---|---|---|
-| Lan | Tin Phong vô điều kiện | Năm 8 tuổi đi lạc trong rừng tre, Phong dùng căn tìm ra và cõng về. 10 năm qua vẫn mang cơm cho Phong khi cả làng tránh mặt | "Tao không biết chuyện đêm đó. Nhưng tao biết Phong không phải thứ chúng mày đang nghĩ." |
-| Khoa | Tin Phong | Không tin chuyện làm phép giết người | Phong nói chuyện ma quỷ vô lý |
-| Minh | Lưỡng lự | Cũng có căn, sợ mình sẽ thành như Phong; đó là lý do Minh bỏ làng | Phong đáng sợ, vì Minh từng thấy thứ gì đó |
-| Tuấn | Không tin Phong | Hồi nhỏ lấy trộm tiền công đức ở đình, Phong biết nhưng không tố. Tuấn sợ Phong nhìn thấu bí mật của mình | Phong biết bí mật của mình |
-| Vy | Không tin Phong | Cần một người để trách cho cái chết của anh | Phong là kẻ giết Hải |
+| Nhân vật | Phe | Lý do |
+|---|---|---|
+| Lan | Tin Phong vô điều kiện | Năm 8 tuổi đi lạc trong rừng tre, Phong dùng căn tìm ra và cõng về. 10 năm qua vẫn mang cơm cho Phong khi cả làng tránh mặt |
+| Khoa | Tin Phong | Không tin chuyện làm phép giết người |
+| Minh | Lưỡng lự | Cũng có căn, sợ mình sẽ thành như Phong; đó là lý do Minh bỏ làng |
+| Tuấn | Không tin Phong | Hồi nhỏ lấy trộm tiền công đức ở đình, Phong biết nhưng không tố. Tuấn sợ Phong nhìn thấu bí mật của mình |
+| Vy | Không tin Phong | Cần một người để trách cho cái chết của anh |
 
 **Trạng thái quan hệ** (dùng cho truyện và ending, không phải một thanh điểm)
 
@@ -271,13 +281,12 @@ Né và May mắn là chỉ số ẩn, người chơi không thấy số. Né kh
 | Nhân vật | HP | Công | Thủ | Crit | Tốc | Né (ẩn) | May mắn (ẩn) | Kháng Âm khí |
 |---|---|---|---|---|---|---|---|---|
 | Minh | 24 | 5 | 2 | 5% | 10 | 5% | 2 | 10% |
-| Vy | 22 | 4 | 2 | 10% | 12 | 10% | 3 | 0% |
+| Vy | 22 | 4 | 2 | 10% | 12 | 10% | 3 | 5% |
 | Lan | 26 | 3 | 3 | 5% | 8 | 5% | 4 | 10% |
 | Tuấn | 26 | 7 | 2 | 15% | 9 | 5% | 2 | 0% |
 | Khoa | 32 | 4 | 5 | 5% | 6 | 0% | 1 | 25% |
 
-- **Khoa** có Kháng Âm khí cao vì luôn tập trung vào những gì kiểm chứng được, nên ảo giác và thao túng tâm lý khó tác động tới anh. Đây là cách Khoa xử lý nỗi sợ, không phải "không tin thì miễn nhiễm".
-- **Tuấn** có Kháng Âm khí thấp nhất đội. Các hiệu ứng gây ảo giác có xu hướng ưu tiên Tuấn: đây là hệ quả của tâm lý lung lay, không phải AI quái bắt buộc nhắm Tuấn.
+Khoa có Kháng Âm khí cao nhờ luôn tập trung vào những gì kiểm chứng được, nên ảo giác và thao túng tâm lý khó tác động tới anh. Tuấn có Kháng Âm khí thấp nhất đội.
 
 **Trang bị:** mỗi người 2 ô, gồm 1 vật dụng đời thường (rựa, đèn pin, gậy tre) và 1 bùa từ thầy cúng.
 
@@ -386,7 +395,3 @@ Code Day 1 (bản grid cũ): giữ UnitData, Commands và FSM của AI; bỏ Gri
 ## Câu hỏi mở
 
 1. Giao diện màn dựng lại sự kiện ở True End: chốt khi làm full game, sau Vertical Slice.
-2. Vy đeo chiếc chuông nhỏ là kỷ vật của Hải, nhưng bảng Kỷ vật đang có "Chuông nhỏ của bà nội" (chủ: Minh), còn kỷ vật của Vy là "Con diều Hải làm". Đổi kỷ vật của Vy thành chuông, hay giữ chuông chỉ là chi tiết ngoại hình?
-3. Tuấn "Kháng Âm khí thấp nhất đội", nhưng bảng chỉ số đang để Tuấn và Vy cùng 0%. Hạ của Tuấn hay nâng của Vy?
-4. Luật "đọc văn tự" của Tuấn trong trận chưa có. Trong bản thử, skill của Tuấn đang mang tên "Đọc văn tự" nhưng tác dụng vẫn là đòn mạnh x2.
-5. "Hiệu ứng gây ảo giác ưu tiên Tuấn": cần định nghĩa hiệu ứng ảo giác là gì trong combat.
