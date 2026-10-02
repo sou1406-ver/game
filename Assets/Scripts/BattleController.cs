@@ -730,7 +730,7 @@ namespace KyUc
             var an = AnimOf(c);
             bool hurt = !c.IsAlive || Time.time - an.hitT < HitTime;
             bool atk = !hurt && Time.time - an.actT < ActTime;
-            string idle = (((int)(Time.time * 1.6f)) + (c.IsAlly ? ctx.Allies.IndexOf(c) : ctx.Enemies.IndexOf(c))) % 2 == 0 ? "0" : "1";
+            const string idle = "0"; // đứng yên chỉ dùng khung thủ thế; nhịp thở do AnimOffset nhún 1 pixel
             // Sprite trận riêng: Battle/<tên>_0, _1 (thở), _atk, _hurt (extract_ref.py, từ ảnh <tên>_battle.png)
             var b = Tex("Battle/" + key + "_" + (hurt ? "hurt" : atk ? "atk" : idle));
             if (b == null && (hurt || atk)) b = Tex("Battle/" + key + "_0");
@@ -818,11 +818,14 @@ namespace KyUc
             var tex = SpriteFor(c, out fb);
             var slot = SlotPos(c);
             var feet = slot + AnimOffset(c);
-            float h = tex == null ? 24f : fb ? 30f : tex.height;
-            float wd = tex == null ? 16f : fb ? tex.width * 30f / tex.height : tex.width;
-            var r = new Rect(Mathf.Round(feet.x - wd / 2f), feet.y - h + 1, wd, h);
-            DrawSquare(ViewToScreen(new Rect(slot.x - 7, slot.y - 1, 14, 3)), new Color(0f, 0f, 0f, c.IsAlive ? 0.35f : 0.15f));
-            var sr = ViewToScreen(r);
+            // Phóng sprite theo bội số nguyên của chính nó (mỗi pixel ảnh = s pixel màn hình) để luôn nét,
+            // chọn s sao cho người cao khoảng 27% màn hình dù ảnh gốc to hay nhỏ.
+            int s = 1;
+            if (tex != null) s = Mathf.Max(1, Mathf.RoundToInt(Screen.height * (c.IsAlly ? 0.26f : 0.28f) / tex.height));
+            float tw = tex == null ? 16f * px : tex.width * s, th = tex == null ? 24f * px : tex.height * s;
+            var fs = ViewToScreen(new Rect(feet.x, feet.y, 0, 0));
+            var sr = new Rect(Mathf.Round(fs.x - tw / 2f), fs.y - th + px, tw, th);
+            DrawSquare(ViewToScreen(new Rect(slot.x - 9, slot.y - 1, 18, 3)), new Color(0f, 0f, 0f, c.IsAlive ? 0.35f : 0.15f));
             spriteRects[c] = sr;
             if (tex == null)
             {
@@ -1477,7 +1480,7 @@ namespace KyUc
             if (!c.IsAlive) return o;
 
             float seed = (c.Name.GetHashCode() & 255) / 40f;
-            if (c.IsAlly && Mathf.Sin(now * 2.2f + seed) < 0f) o.y += 1f;
+            if (Mathf.Sin(now * (c.IsAlly ? 1.8f : 1.3f) + seed) < 0f) o.y += 1f; // thở: nhún 1 pixel, chậm
 
             float dt = now - an.actT;
             if (dt < ActTime)

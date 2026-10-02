@@ -31,7 +31,7 @@ def cut(src, box, tol=26):
     return flood_cut(sheet(src).crop(box), tol)
 
 
-def flood_cut(img, tol=26):
+def flood_cut(img, tol=26, crop=True):
     """Xoá nền một màu bất kỳ bằng loang từ mép vào (dùng khi AI không ra nền magenta)."""
     img = img.convert("RGB")
     w, h = img.size
@@ -61,7 +61,7 @@ def flood_cut(img, tol=26):
                 op[x, y] = (0, 0, 0, 0)
     keep_main(out)
     bbox = out.getbbox()
-    return out.crop(bbox) if bbox else out
+    return out.crop(bbox) if bbox and crop else out
 
 
 def keep_main(img, near=4, min_frac=0.02):
@@ -185,6 +185,10 @@ WALK_H, WALK_CW, WALK_CH = 34, 24, 36  # cao nhân vật, khung ảnh
 
 
 def walk_frames(spec):
+    sizes = {(box[2] - box[0], box[3] - box[1]) for _, box in spec}
+    if len(sizes) == 1 and len(spec) > 1:  # các ô cùng cỡ: cắt chung khung bao để đi không bị giật
+        imgs = union_crop([flood_cut(sheet(src).crop(box), crop=False) for src, box in spec])
+        return [canvas(pixelize(im, WALK_H), WALK_CW, WALK_CH) for im in imgs]
     return [canvas(pixelize(cut(src, box), WALK_H), WALK_CW, WALK_CH) for src, box in spec]
 
 
@@ -264,7 +268,7 @@ def build_enemies():
 
 # ---------- Sprite sheet nền magenta tạo bằng AI (Docs/PROMPT_ART.md) ----------
 
-def magenta_cut(img):
+def magenta_cut(img, crop=True):
     """Xoá nền magenta và viền pha hồng ở mép, chỉ giữ khối hình chính, thu gọn sát hình."""
     out = img.convert("RGBA")
     px = out.load()
@@ -278,7 +282,14 @@ def magenta_cut(img):
                 px[x, y] = (min(r, g + 30), g, min(b, g + 30), 255)
     keep_main(out)
     bbox = out.getbbox()
-    return out.crop(bbox) if bbox else out
+    return out.crop(bbox) if bbox and crop else out
+
+
+def union_crop(imgs):
+    """Cắt các khung cùng một khung bao chung: giữ nguyên vị trí tương đối giữa các khung (không giật)."""
+    boxes = [im.getbbox() for im in imgs if im.getbbox()]
+    box = (min(b[0] for b in boxes), min(b[1] for b in boxes), max(b[2] for b in boxes), max(b[3] for b in boxes))
+    return [im.crop(box) for im in imgs]
 
 
 def sheet_cells(path, cols, rows, inset=8, bg="magenta"):
@@ -290,11 +301,11 @@ def sheet_cells(path, cols, rows, inset=8, bg="magenta"):
     for r in range(rows):
         for c in range(cols):
             box = (int(c * cw + inset), int(r * ch + inset), int((c + 1) * cw - inset), int((r + 1) * ch - inset))
-            cells.append(magenta_cut(img.crop(box)) if bg == "magenta" else flood_cut(img.crop(box), 30))
+            cells.append(magenta_cut(img.crop(box), crop=False) if bg == "magenta" else flood_cut(img.crop(box), 30, crop=False))
     return cells
 
 
-BATTLE_H = 56   # chiều cao người trong trận (pixel trận)
+BATTLE_H = 96   # chiều cao khung trận (pixel ảnh), gần độ chi tiết thật của ảnh AI; game phóng theo bội số nguyên
 BATTLE_POSES = ["0", "1", "atk", "hurt"]  # 4 ô của prompt B: thủ thế, thở, đánh, trúng đòn
 # tấm nào AI không ra đúng lưới 2x2 nền magenta thì khai báo ở đây (thứ tự ô vẫn: thủ thế, thở, đánh, trúng đòn)
 BATTLE_LAYOUT = {
@@ -312,9 +323,9 @@ def build_battle_sheets():
         lay = BATTLE_LAYOUT.get(name, {})
         cells = sheet_cells(os.path.join(REF, f), lay.get("cols", 2), lay.get("rows", 2), lay.get("inset", 8),
                             lay.get("bg", "magenta"))
-        # cùng một tỉ lệ thu cho cả 4 ô (theo ô thủ thế) để người không to nhỏ khác nhau
-        scale = BATTLE_H / cells[0].height
-        frames = [pixelize(c, max(8, round(c.height * scale)), colors=32) for c in cells]
+        # 4 ô cắt chung một khung bao và thu cùng tỉ lệ: cùng cỡ, giữ vị trí tương đối, đổi tư thế không bị giật
+        cells = union_crop(cells)
+        frames = [pixelize(c, BATTLE_H, colors=48) for c in cells]
         cw = max(fr.width for fr in frames) + 2
         ch = max(fr.height for fr in frames) + 1
         for pose, fr in zip(BATTLE_POSES, frames):
@@ -340,9 +351,12 @@ def build_walk_sheets():
             continue
         cells = sheet_cells(path, spec["cols"], spec["rows"], inset=6)
         cell = lambda rc: cells[rc[0] * spec["cols"] + rc[1]]
-        scale = WALK_H / cell(spec["down"][0]).height  # cùng tỉ lệ cho mọi khung
-        def frames(key):
-            return [canvas(pixelize(cell(rc), max(8, round(cell(rc).height * scale))), WALK_CW, WALK_CH) for rc in spec[key]]
+        ref_h = union_crop([cell(rc) for rc in spec["down"]])[0].height
+        scale = WALK_H / ref_h  # cùng tỉ lệ cho mọi hướng
+
+        def frames(key):  # các khung một hướng cắt chung khung bao: đi không bị giật
+            imgs = union_crop([cell(rc) for rc in spec[key]])
+            return [canvas(pixelize(im, max(8, round(im.height * scale))), WALK_CW, WALK_CH) for im in imgs]
         down, up, side = frames("down"), frames("up"), frames("side")
         left = [mirror(f) for f in side] if spec["side_faces"] == "right" else side
         for i in range(3):
