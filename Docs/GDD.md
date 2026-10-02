@@ -1,10 +1,10 @@
-# Ký Ức Bị Chôn — GDD v0.4
+# Ký Ức Bị Chôn — GDD v0.5
 
 2026-10-02 · @Tien Giap
 
 ## Tổng quan
 
-Năm người bạn cũ bị một thứ dưới lòng đất gọi về làng quê Bắc Bộ nơi người bạn thứ bảy đã chết. Ban ngày họ sống ở làng, ban đêm đánh ma quỷ dân gian bằng combat turn-based, và dần đào lại sự thật mà thực thể đó đã bóp méo.
+Bốn người bạn cũ bị một thứ dưới lòng đất gọi về làng quê Bắc Bộ nơi người bạn thứ bảy đã chết, gặp lại hai người đã ở lại. Ban ngày họ sống ở làng, ban đêm đánh ma quỷ dân gian bằng combat turn-based, và dần đào lại sự thật mà thực thể đó đã bóp méo.
 
 | Mục | Nội dung |
 |---|---|
@@ -39,27 +39,28 @@ Thực thể dưới làng là oán niệm của vô số người chết trên 
 
 1. Bảy đứa trẻ lớn lên cùng nhau: Minh, Vy, Tuấn, Khoa, Lan, Phong, Hải. Nhà nào cũng mang huyết mạch người phong ấn, nhưng chúng không biết. Chỉ Phong được gia đình kể một phần: nhà Phong trông điện Thoải phủ, Phong có căn, và chỉ biết một điều: không được để thứ dưới điện thoát ra.
 2. Phong tò mò dẫn cả nhóm xuống khu cấm dưới điện. Lúc nghịch, Phong vô tình làm xê dịch một vật giữ trận pháp. Người lớn sửa lại nhưng không ai biết phong ấn đã không còn nguyên. Thực thể bắt đầu chạm được ra ngoài: thì thầm trong giấc mơ, hình ảnh không rõ nguồn gốc, những thôi thúc vô cớ. Nó tìm đến bọn trẻ, nhất là những đứa đang mang cảm xúc mạnh nhất.
-3. Nhóm dần xa nhau. Hải thấy mình bị bỏ rơi, Phong ngày càng khác, mỗi người có bí mật riêng. Nhóm bỏ lại Phong. Sự chia rẽ không hoàn toàn ngẫu nhiên: thực thể liên tục đẩy họ xa nhau, giống IT.
+3. Nhóm dần xa nhau. Hải thấy mình bị bỏ rơi, Phong ngày càng khác, mỗi người có bí mật riêng. Sự chia rẽ không hoàn toàn ngẫu nhiên: thực thể liên tục đẩy họ xa nhau, giống IT.
 4. Trong một lần xảy ra chuyện, cả nhóm bỏ Hải lại. Hải giận, đi theo một nhóm thanh niên lêu lổng. Đêm đó nhóm này phá điện Thoải phủ đang bỏ hoang, làm phong ấn vốn đã tổn thương yếu thêm.
 5. Thực thể tìm thấy Hải, đứa trẻ đang giận, thấy bị bỏ rơi, đầy oán, và kéo Hải xuống. Hải chết. Thực thể chưa ra hẳn được và cần một hình hài, nên dùng Hải: từ đó mặt Hải là mặt của nó, và Hải thành một điểm neo mới của nó.
-6. Phong cảm được, chạy tới điện, thấy thứ gì đó kéo Hải xuống bóng tối. Muốn cứu nhưng sợ, đứng đó rồi bỏ chạy. Phong không cứu được, cũng không nói với ai. Minh đi tìm Hải, từ xa thấy Phong ở gần điện, chạy về phía Hải, nhưng không thấy thứ đang kéo Hải. Minh bỏ chạy.
-7. Mọi người chỉ biết Phong là người cuối cùng ở bên Hải, và Hải đã chết. Thành chuyện "Phong giết Hải". Phong không giải thích. Nhóm rời làng; Phong và Lan ở lại.
+6. Phong cảm được, chạy tới điện, thấy Hải bị kéo đi, đuổi theo, nhưng cuối cùng dừng lại vì sợ. Phong không cứu được, cũng không nói với ai. Minh đi tìm Hải, từ xa thấy Phong ở gần điện, chạy về phía Hải, nhưng không thấy thứ đang kéo Hải. Minh bỏ chạy.
+7. Mọi người chỉ biết Phong là người cuối cùng ở bên Hải, và Hải đã chết. Thành chuyện "Phong giết Hải". Phong không giải thích. Minh, Vy, Tuấn, Khoa lần lượt rời làng. Phong ở lại vì trách nhiệm với gia đình và phong ấn. Lan ở lại vì gia đình vẫn sống ở làng và chưa bao giờ thật sự có cơ hội rời đi.
 
 **Mười năm**
 
 - Phong cố giữ phong ấn, nhưng phong ấn đã hỏng, và Hải đã thành điểm neo mới của thực thể.
-- Năm người kia lớn lên với vết thương riêng (xem Nhân vật). Ai cũng có một phần của đêm Hải chết mà chưa từng đối diện.
+- Lan chứng kiến làng đổi từng chút: đường cũ ít người đi, nơi đông đúc bỏ hoang, chuyện phong ấn bị quên dần.
+- Bốn người kia lớn lên bên ngoài làng. Cả sáu mang vết thương riêng, sáu cách đối diện (xem Nhân vật). Ai cũng có một phần của đêm Hải chết mà chưa từng đối diện.
 
 **Hiện tại**
 
-1. Phong ấn gần tới giới hạn. Thực thể mạnh hơn nhưng chưa tự phá được. Nó nhận ra 5 người là hậu duệ trực hệ cuối cùng: không giết được họ vì phong ấn dùng chính huyết mạch họ, nhưng huyết mạch đó cũng phá được phong ấn từ bên trong.
-2. Nó gọi họ về bằng thứ họ không quên được: một giọng nói, một món đồ cũ, một giấc mơ, một lời nhắn, một ký ức về Hải. Ai cũng tin mình về vì lý do riêng, không ai biết người khác cũng đang về. Lan vốn vẫn sống ở làng. _[Lý do về của từng người: chưa chốt]_
-3. Phong gặp năm người ở cổng làng, chỉ nói: "Chúng mày không nên về." Vy hỏi ngay về Hải, Minh không dám nhìn Phong, Khoa cho là chuyện mê tín, Tuấn né, Lan im lặng. Phong không nói hết sự thật: chưa chắc họ tin, và thứ đó cũng đang nghe.
+1. Phong ấn gần tới giới hạn. Thực thể mạnh hơn nhưng chưa tự phá được. Nó nhận ra 6 người còn sống là hậu duệ cuối cùng mang huyết mạch người phong ấn (Phong, Lan, Minh, Vy, Tuấn, Khoa): không giết được họ vì phong ấn dùng chính huyết mạch họ, nhưng huyết mạch đó cũng phá được phong ấn từ bên trong.
+2. Nó gọi bốn người đã rời làng về bằng thứ họ không quên được: một giọng nói, một món đồ cũ, một giấc mơ, một lời nhắn, một ký ức về Hải. Ai cũng tin mình về vì lý do riêng, không ai biết người khác cũng đang về. _[Lý do về của từng người: chưa chốt]_
+3. Phong đã chờ sẵn. Thấy bốn người đứng trước cổng làng, Phong chỉ nói: "Chúng mày không nên về." Vy hỏi ngay về Hải, Minh không dám nhìn Phong, Khoa cho là chuyện mê tín, Tuấn né, Lan im lặng. Phong không nói hết sự thật: chưa chắc họ tin, và thứ đó cũng đang nghe.
 4. Làng bắt đầu đổi: đường đổi hướng, nhà hoang hiện lại trong ký ức, người chết vào giấc mơ, chỗ quen thành lạ. Ký ức của họ bắt đầu bị bẻ cong (xem Mystery).
 5. Thực thể nhốt cả làng trong một vòng lặp để tận hưởng nỗi sợ. _[Giữ từ v0.3, plot mới chưa nhắc]_
 6. Thực thể bám vào các điện bỏ hoang, khoác hình tượng chư vị Tứ phủ. Đó là các "vị tha hóa" mà nhóm phải thanh tẩy. Để tìm câu trả lời, nhóm phải đi qua bốn phủ, những nơi gắn với phong ấn.
-7. **Cái bẫy:** mỗi lần vượt qua một nơi bị nguyền, chạm vào một vật của quá khứ, nhớ lại một mảnh ký ức, phong ấn lại yếu đi. Càng điều tra để diệt nó, họ càng giúp nó thoát ra. Họ không được gọi về để tìm Hải, mà để phá phong ấn.
-8. **Thứ nó tính sai:** nó hiểu sợ hãi, tội lỗi, biết biến ký ức thành lời buộc tội, nhưng không hiểu rằng con người có thể cùng nhau nhớ lại sự thật. Mỗi người giữ một mảnh của đêm Hải chết; không ai đủ một mình, ghép lại thì ký ức méo sụp đổ.
+7. **Cái bẫy:** bốn người trở về, cùng Phong và Lan, sáu hậu duệ lại ở chung trên vùng đất này. Nó kéo họ từng bước về phía các điểm neo: mỗi lần vượt qua một nơi bị nguyền, chạm vào một vật của quá khứ, nhớ lại một mảnh ký ức, phong ấn lại yếu đi. Càng điều tra để diệt nó, họ càng giúp nó thoát ra. Họ không được gọi về để tìm Hải, mà để phá phong ấn.
+8. **Thứ nó tính sai:** nó hiểu sợ hãi, tội lỗi, biết biến ký ức thành lời buộc tội, nhưng không hiểu rằng con người có thể cùng nhau nhớ lại sự thật. Hải đã chết, nhưng sáu người còn lại vẫn tìm lại được nhau. Mỗi người giữ một mảnh của đêm Hải chết; không ai đủ một mình, ghép lại thì ký ức méo sụp đổ.
 
 Chủ đề: quỷ không thắng bằng sức mạnh, mà bằng chính ký ức, tội lỗi và sự nghi ngờ của con người. Thứ nó không lấy được là sự thật mà nhiều người cùng nhớ lại.
 
@@ -89,7 +90,7 @@ Năm người chơi được, mỗi đêm ra trận 3. Hải và Phong không ch
 | Lan | Chịu đựng | Tiếp tục chịu đựng |
 | Hải | Bị quá khứ nuốt lấy | — |
 
-Con quỷ không chỉ đánh nhau với họ: nó khuyến khích từng người giữ cách đối diện cũ. Truyện không chỉ là tìm ai giết Hải, mà là các nhân vật phải đối diện với cách chính mình đã xử lý đêm Hải chết. True End không phải nhân vật trở nên hoàn hảo, mà là cuối cùng họ nhìn thẳng được vào những gì đã xảy ra. Hải là người bị quá khứ nuốt mất; năm người còn lại vẫn còn cơ hội thoát khỏi nó. Vì vậy câu "Nó ăn những câu chuyện mà con người tự kể cho mình về quá khứ" là trung tâm của game.
+Con quỷ không chỉ đánh nhau với họ: nó khuyến khích từng người giữ cách đối diện cũ. Truyện không chỉ là tìm ai giết Hải, mà là các nhân vật phải đối diện với cách chính mình đã xử lý đêm Hải chết. True End không phải nhân vật trở nên hoàn hảo, mà là cuối cùng họ nhìn thẳng được vào những gì đã xảy ra. Hải là người bị quá khứ nuốt mất; sáu người còn lại vẫn còn cơ hội thoát khỏi nó. Vì vậy câu "Nó ăn những câu chuyện mà con người tự kể cho mình về quá khứ" là trung tâm của game.
 
 Minh và Phong đều có căn: một người trốn khỏi nó, một người ở lại với nó.
 
@@ -98,7 +99,7 @@ Minh và Phong đều có căn: một người trốn khỏi nó, một người
 - **Tuổi thơ:** thường cảm thấy những thứ lạ ở điện: tiếng bước chân khi không có ai, bóng người cuối hành lang rồi biến mất, tiếng gọi tên mình ban đêm. Gia đình không kể hết, chỉ dạy: không vào nơi cấm, không chạm đồ của điện, không bao giờ trả lời khi nghe ai gọi tên mình từ bên dưới. Phong không hiểu vì sao, chỉ nghe lời.
 - **Với nhóm:** không cầm đầu, không nói nhiều. Vì hay thấy thứ người khác không thấy, dần bị coi là kỳ quặc.
 - **Ngày phong ấn tổn thương:** tưởng khu cấm dưới điện chỉ là hầm cũ. Sau khi làm xê dịch vật giữ trận pháp, căn của Phong mạnh lên, thấy nhiều hơn, nghe tiếng gọi rõ hơn. Phong không biết chính mình đã làm phong ấn yếu đi.
-- **Đêm Hải chết:** cảm được thứ dưới điện trước mọi người, chạy tới, thấy thứ gì đó kéo Hải xuống bóng tối. Muốn cứu nhưng sợ, đứng đó, rồi bỏ chạy. Điều đau nhất không phải Hải chết, mà là Phong biết mình đã có thể làm gì đó nhưng không làm.
+- **Đêm Hải chết:** cảm được thứ dưới điện trước mọi người, chạy tới, thấy thứ gì đó kéo Hải xuống bóng tối. Muốn cứu, đuổi theo, nhưng cuối cùng dừng lại vì sợ. Điều đau nhất không phải Hải chết, mà là Phong biết mình đã có thể làm gì đó nhưng không làm.
 - **Mười năm:** không rời làng, nhận nhiệm vụ gia đình trông điện. Làng nghĩ đó là hình phạt; Phong không giải thích. Phong ở lại vì tin mình đã góp phần làm phong ấn yếu: giữ lễ, sửa các điểm phong ấn, theo dõi làng, âm thầm tìm hiểu thứ đã giết Hải, và nhận ra không thể giải quyết một mình.
 - **Vì sao không nói:** 10 năm trước đã thử nói. Không ai tin, hoặc Phong nghĩ vậy. Sau ánh mắt của Minh, Vy và những người khác, Phong chọn im lặng.
 - **Arc:** giữ bí mật không phải lúc nào cũng là bảo vệ người khác; có sự thật dù đau vẫn phải nói. Điều Phong phải đối diện không chỉ là cái chết của Hải, mà là 10 năm tự trừng phạt mình.
@@ -110,7 +111,7 @@ Minh và Phong đều có căn: một người trốn khỏi nó, một người
 - **Với nhóm:** người kết nối cả nhóm. Kéo Phong về khi Phong bị xa lánh, làm dịu khi Minh và Vy cãi nhau, cười rồi kéo cả Tuấn và Khoa đi chơi khi hai đứa tranh luận. Nhưng chính người kết nối lại là người đầu tiên thấy mình bị bỏ lại.
 - **Sự thay đổi:** Phong ở điện nhiều hơn, Minh quan tâm chuyện khác, Vy nghiêm khắc hơn, Tuấn và Khoa có bí mật riêng, Lan có cuộc sống riêng. Hải thấy không ai còn cần mình, không nói ra mà biến thành trò nghịch: càng bị nhắc càng làm, càng bị bỏ lại càng tỏ ra không quan tâm.
 - **Đêm cuối:** bị nhóm bỏ lại, đi theo nhóm thanh niên để chứng minh mình không cần bạn cũ. Thực thể không chọn Hải ngẫu nhiên: nó cảm được oán hận, cảm giác bị bỏ rơi, giận dữ, cô độc của Hải và dùng chính chúng để kéo Hải xuống.
-- **Sau cái chết:** Hải không trở thành con quỷ. Hải đã chết. Thứ mang mặt Hải là con quỷ dùng hình hài và ký ức của Hải. Vì nó hấp thụ Hải đầu tiên, một phần ký ức Hải hòa vào nó: nó có thể nói những câu chỉ Hải biết, nhớ chuyện Hải từng trải, dùng giọng Hải. Nhưng nó không hiểu Hải, chỉ hiểu những cảm xúc Hải từng có. Nhờ đó nó dùng Hải để thao túng năm người.
+- **Sau cái chết:** Hải không trở thành con quỷ. Hải đã chết. Thứ mang mặt Hải là con quỷ dùng hình hài và ký ức của Hải. Vì nó hấp thụ Hải đầu tiên, một phần ký ức Hải hòa vào nó: nó có thể nói những câu chỉ Hải biết, nhớ chuyện Hải từng trải, dùng giọng Hải. Nhưng nó không hiểu Hải, chỉ hiểu những cảm xúc Hải từng có. Nhờ đó nó dùng Hải để thao túng những người còn lại.
 
 ### Phong — Hải
 
@@ -152,7 +153,7 @@ Quan hệ quan trọng nhất của nhóm. Không phải "hai đứa thân nhấ
 ### Lan
 
 - **Tuổi thơ:** không nổi bật, đứng ngoài quan sát, nhưng nhớ những chuyện người khác quên: ai nói gì, ai cãi nhau, ai bỏ đi, ai quay lại.
-- **Sau khi Hải chết:** những người khác rời làng, Lan ở lại vì gia đình không cho đi. Càng ở càng gắn với làng: biết đường cũ, nhà hoang, nơi không nên đến, và những chuyện người lớn giấu trẻ con.
+- **Sau khi Hải chết:** Minh, Vy, Tuấn, Khoa lần lượt rời làng. Lan ở lại vì gia đình vẫn sống ở làng và chưa bao giờ thật sự có cơ hội rời đi. Càng ở càng gắn với làng: biết đường cũ, nhà hoang, nơi không nên đến, và những chuyện người lớn giấu trẻ con.
 - **Mười năm:** biết Phong vẫn ở đó, điện vẫn còn, có chuyện lạ xảy ra, nhưng chưa bao giờ hỏi Phong. Một phần vẫn oán Phong, một phần oán những người đã đi.
 - **Quỷ khai thác:** cho Lan thấy lại những ngày mọi người rời làng, những lần đứng nhìn họ đi, những lời hứa sẽ quay lại mà không ai quay lại. Nó khiến Lan tin: "Chúng nó chỉ quay về vì cần mày", để tách Lan khỏi nhóm lần nữa.
 - **Phải đối diện:** thừa nhận mình đã oán rất lâu; ở lại không có nghĩa là bị bỏ rơi mãi mãi. Lan có quyền giận, nhưng không cần sống mãi trong cơn giận đó.
@@ -197,14 +198,14 @@ Quỷ không sửa ký ức. Nó khuếch đại nỗi sợ, tội lỗi và oá
 
 | Tầng | Nội dung |
 |---|---|
-| Sự kiện thật | Phong thấy Hải bị kéo đi, đứng đó rồi bỏ chạy, không cứu được, rồi im lặng |
-| Ký ức của Phong | "Tôi đã đứng đó. Tôi đã không cứu nó." |
+| Sự kiện thật | Phong thấy Hải bị kéo đi, đuổi theo rồi dừng lại vì sợ, không cứu được, rồi im lặng |
+| Ký ức của Phong | "Tôi đã dừng lại. Tôi đã không cứu nó." |
 | Diễn giải bị khuếch đại | "Tôi đã chọn để Hải chết." |
 | Kết luận của người khác | "Phong giết Hải" — sai, dù không câu nào vô căn cứ |
 
 **Quy tắc**
 
-- Mỗi người nhớ một mảnh thật, bị bẻ theo vết thương của mình: Minh nhớ Phong đã ở đó, Vy nhớ những lần cãi nhau với Hải, Tuấn nhớ bí mật của nhóm, Khoa nhớ dấu vết vật chất, Lan nhớ ngày cả nhóm bỏ lại Phong.
+- Mỗi người nhớ một mảnh thật, bị bẻ theo vết thương của mình: Minh nhớ Phong đã ở đó, Vy nhớ những lần cãi nhau với Hải, Tuấn nhớ bí mật của nhóm, Khoa nhớ dấu vết vật chất, Lan nhớ ngày cả nhóm rời đi để lại cô và Phong trong làng, Phong nhớ khoảnh khắc mình dừng lại.
 - Mỗi ký ức bị bóp méo có ít nhất 1 chi tiết mâu thuẫn với một kỷ vật hoặc ký ức khác: một vật kỷ niệm, một dấu chân, một vết thương, một lời nói, hoặc một thứ lẽ ra phải có mà không có. Để ý kỹ là phát hiện được.
 - Kỷ vật là bằng chứng khó bị bóp méo.
 - Game không báo lựa chọn nào là "sai". Nhân vật hành động theo điều họ tin; người chơi tự nhận ra mình bị dẫn dắt khi tìm thấy sự thật.
@@ -214,14 +215,14 @@ Quỷ không sửa ký ức. Nó khuếch đại nỗi sợ, tội lỗi và oá
 
 1. **Người chơi tin:** Phong có căn, bị bỏ lại, ở lại làng, Hải chết. Vậy Phong đã giết Hải.
 2. **Người chơi bắt đầu nghi:** lời kể trong làng mâu thuẫn, kỷ vật cho thấy Hải giận nhóm trước khi chết, dấu vết ở hiện trường không giống phép của Phong.
-3. **Sự thật:** thực thể chạm ra ngoài qua phong ấn đã hỏng, kéo Hải chết và dùng Hải làm hình hài. Phong không giết Hải, nhưng đã thấy mà không cứu, không nói. Việc nhóm chia rẽ nằm trong kế hoạch của thực thể. Năm người được gọi về để phá phong ấn.
+3. **Sự thật:** thực thể chạm ra ngoài qua phong ấn đã hỏng, kéo Hải chết và dùng Hải làm hình hài. Phong không giết Hải, nhưng đã thấy mà không cứu, không nói. Việc nhóm chia rẽ nằm trong kế hoạch của thực thể. Bốn người được gọi về để cùng Phong và Lan phá phong ấn.
 
 **Tiết lộ theo phủ**
 
 | Phủ | Tầng | Lộ ra |
 |---|---|---|
 | Thoải (Vertical Slice) | 1 → đầu 2 | Phong thấy Hải bị kéo đi, không giết Hải nhưng không cứu được, và im lặng suốt 10 năm; kỷ vật đầu tiên mâu thuẫn với lời kể trong làng |
-| Nhạc | 2 | Ngày bỏ lại Phong và khúc mắc của từng người; việc chia rẽ không ngẫu nhiên, có thứ liên tục đẩy họ xa nhau |
+| Nhạc | 2 | Những ngày cuối trước khi Hải chết và khúc mắc của từng người; việc chia rẽ không ngẫu nhiên, có thứ liên tục đẩy họ xa nhau |
 | Địa | 2 | Dấu vết vật chất không khớp chuyện cũ; Hải đã giận nhóm trước khi chết; Minh nhớ lại điều mình thấy đêm đó |
 | Thiên | 3 | Ghi chép về các gia tộc: chiến trường, những người chết trong lễ phong ấn, các gia tộc ở lại giữ phong ấn. Họ được gọi về để phá phong ấn |
 
@@ -229,7 +230,7 @@ Quỷ không sửa ký ức. Nó khuếch đại nỗi sợ, tội lỗi và oá
 
 Ending do nghi lễ cuối quyết định, không do điểm số. Bad End là lịch sử lặp lại: nhóm lại không thể cùng nhau làm việc cuối như 10 năm trước, và quỷ thắng. Game không nói thẳng điều này; người chơi tự nhận ra.
 
-**Nghi lễ cuối** cần đủ 5 người, vì mỗi người giữ một phần sự thật mà người khác không tự nhớ lại được: Vy giữ ký ức về Hải, Minh về đêm đó, Lan về ngày Phong bị bỏ lại, Tuấn về bí mật của nhóm, Khoa giữ bằng chứng vật chất. Lần này không cần máu. Mỗi người phải thừa nhận sự thật mình đã chôn:
+**Nghi lễ cuối** cần đủ 6 người (5 người chơi được và Phong), vì mỗi người giữ một phần sự thật mà người khác không tự nhớ lại được: Vy giữ ký ức về Hải, Minh về đêm đó, Lan về những năm sau khi mọi người rời đi, Tuấn về bí mật của nhóm, Khoa giữ bằng chứng vật chất, Phong giữ sự thật không ai khác từng thấy. Lần này không cần máu. Mỗi người phải thừa nhận sự thật mình đã chôn:
 
 | Người | Phải thừa nhận | Trạng thái quan hệ liên quan |
 |---|---|---|
@@ -244,20 +245,20 @@ Nếu trạng thái quan hệ của một người quá xấu (ví dụ Vy → P
 
 **Diễn biến cuối game**
 
-1. **Nghi lễ kích hoạt, phong ấn vỡ, thực thể thoát ra.** Nhưng như những người phong ấn năm xưa đã tính: vừa thoát ra là lúc nó yếu nhất. Hàng trăm năm bị giam khiến nó không đủ oán lực giữ hình dạng; nó cần thời gian hấp thụ sợ hãi, ký ức méo, oán hận, tội lỗi, và cần Hải. Lần đầu sau 10 năm, năm người nhìn Hải như một con người: một người bạn, một người em, một đứa trẻ từng giận, một người đã chết. Không phải gương mặt của thứ đứng trước mặt họ.
-2. **Trận cuối.** Nó biến những ký ức tồi tệ nhất thành thật, cho mỗi người thấy phiên bản quá khứ họ sợ nhất, cố chia họ lần nữa. Lần này họ biết chuyện gì đang xảy ra. Mỗi người phải tự đối diện vết thương của mình: không chạy, không giận, không giấu, không phủ nhận, không chỉ chịu đựng. Cả nhóm cùng phá các điểm neo cuối. Mặt Hải xuất hiện lần cuối, nhưng đó không còn là Hải.
+1. **Nghi lễ kích hoạt, phong ấn vỡ, thực thể thoát ra.** Nhưng như những người phong ấn năm xưa đã tính: vừa thoát ra là lúc nó yếu nhất. Hàng trăm năm bị giam khiến nó không đủ oán lực giữ hình dạng; nó cần thời gian hấp thụ sợ hãi, ký ức méo, oán hận, tội lỗi, và cần Hải. Lần đầu sau 10 năm, sáu người nhìn Hải như một con người: một người bạn, một người em, một đứa trẻ từng giận, một người đã chết. Không phải gương mặt của thứ đứng trước mặt họ.
+2. **Trận cuối.** Nó biến những ký ức tồi tệ nhất thành thật, cho mỗi người thấy phiên bản quá khứ họ sợ nhất, cố chia họ lần nữa. Lần này họ biết chuyện gì đang xảy ra. Mỗi người phải tự đối diện vết thương của mình: không chạy, không giận, không giấu, không phủ nhận, không chỉ chịu đựng, và Phong không còn im lặng. Sáu người cùng phá các điểm neo cuối. Mặt Hải xuất hiện lần cuối, nhưng đó không còn là Hải.
 
 | Ending | Điều kiện | Kết quả |
 |---|---|---|
-| Bad End — Ký Ức Bị Chôn | Có người từ chối phần nghi lễ (nhóm không đủ gắn kết) | Nghi lễ thất bại, phong ấn vỡ hẳn. Quỷ hấp thụ đủ oán niệm để tồn tại bên ngoài. Làng biến mất trong sương âm khí, năm người không còn nhớ chính xác mình là ai, thứ mang mặt Hải rời làng |
-| Normal End — Phong Ấn | Đủ 5 người hoàn thành nghi lễ | Quỷ bị đẩy về, phong ấn tái lập, chưa bị diệt. Nhóm sống sót, làng trở lại bình thường. Có những thứ không xóa khỏi ký ức được, chỉ học cách sống cùng |
-| True End — Sự Thật Được Nhớ Lại | Đủ 5 phần, và dựng lại đúng đêm Hải chết từ bằng chứng | Thực thể mất thứ nó ăn, yếu đến mức diệt được; người chơi chọn tiêu diệt hay giải thoát |
+| Bad End — Ký Ức Bị Chôn | Có người từ chối phần nghi lễ (nhóm không đủ gắn kết) | Nghi lễ thất bại, phong ấn vỡ hẳn. Quỷ hấp thụ đủ oán niệm để tồn tại bên ngoài. Làng biến mất trong sương âm khí, sáu người không còn nhớ chính xác mình là ai, thứ mang mặt Hải rời làng |
+| Normal End — Phong Ấn | Đủ 6 người hoàn thành nghi lễ | Quỷ bị đẩy về, phong ấn tái lập, chưa bị diệt. Sáu người sống sót, làng trở lại bình thường. Có những thứ không xóa khỏi ký ức được, chỉ học cách sống cùng |
+| True End — Sự Thật Được Nhớ Lại | Đủ 6 phần, và dựng lại đúng đêm Hải chết từ bằng chứng | Thực thể mất thứ nó ăn, yếu đến mức diệt được; người chơi chọn tiêu diệt hay giải thoát |
 
 True End là màn dựng lại sự kiện kiểu Return of the Obra Dinn, không phải trắc nghiệm. Người chơi tự trả lời 4 câu: ai kéo Hải đi, Phong ở đâu, vì sao Phong không cứu, Hải làm gì trước đó. Không câu nào giải được bằng một bằng chứng duy nhất; mỗi câu cần ít nhất 3 mảnh giao nhau (lời kể, kỷ vật, dấu vết hiện trường, luật của thực thể, lời Minh). Game chỉ xác nhận khi đúng cả 4 câu, để không đoán mò được.
 
-Sự thật dựng lại được: Hải giận cả nhóm; nhóm bỏ Hải lại; những kẻ khác phá phong ấn; thực thể kéo Hải đi; Phong đã thấy; Minh đã thấy Phong; và không ai trong số họ thật sự hiểu chuyện gì xảy ra đêm đó.
+Sự thật dựng lại được: Hải giận cả nhóm; nhóm bỏ Hải lại; những kẻ khác phá phong ấn; thực thể kéo Hải đi; Phong đã thấy; Minh đã thấy Phong; Lan ở lại và chứng kiến những gì xảy ra sau đó; Tuấn giữ lại bí mật; Khoa giữ những bằng chứng không ai hiểu được; và không ai trong số họ thật sự hiểu chuyện gì xảy ra đêm đó.
 
-Trận cuối không đủ để diệt thực thể. Thứ nó ăn không chỉ là oán hận mà là những câu chuyện con người tự kể về quá khứ; khi sự thật được nhớ lại, nó mất thứ đã nuôi nó 10 năm. Lúc đó người chơi chọn: tiêu diệt nó hoàn toàn, hoặc giải thoát những linh hồn đã kẹt hàng trăm năm, chấp nhận rằng nó không hẳn là một sinh vật riêng mà là oán niệm của vô số người chết. Game không xác nhận bên nào tốt hơn. Chọn bên nào Hải cũng không trở lại, nhưng lần đầu sau 10 năm, nhóm nhớ Hải như một người bạn chứ không như một bí ẩn. Đó là thứ con quỷ không lấy được.
+Trận cuối không đủ để diệt thực thể. Thứ nó ăn không chỉ là oán hận mà là những câu chuyện con người tự kể về quá khứ; khi sự thật được nhớ lại, nó mất thứ đã nuôi nó 10 năm. Lúc đó người chơi chọn: tiêu diệt nó hoàn toàn, hoặc giải thoát những linh hồn đã kẹt hàng trăm năm, chấp nhận rằng nó không hẳn là một sinh vật riêng mà là oán niệm của vô số người chết. Game không xác nhận bên nào tốt hơn. Chọn bên nào Hải cũng không trở lại, nhưng lần đầu sau 10 năm, sáu người nhớ Hải như một người bạn, một người em, một đứa trẻ từng tồn tại cùng họ, chứ không như một bí ẩn. Đó là thứ con quỷ không lấy được.
 
 ## Core loop
 
@@ -406,7 +407,7 @@ Khoa có Kháng Âm khí cao nhờ luôn tập trung vào những gì kiểm ch�
 | Quyển lưu bút của nhóm | Lan | +4 HP | Ngày cả nhóm chia tay |
 | Viên bi ve thắng của Khoa | Tuấn | +5% Crit | Lần đầu Tuấn nợ Khoa |
 | La bàn tự chế | Khoa | +1 Thủ | Khoa thôi tin chuyện tâm linh |
-| Ảnh chụp 7 người | Cả nhóm | +2 HP mỗi người | Ngày bỏ lại Phong |
+| Ảnh chụp 7 người | Cả nhóm | +2 HP mỗi người | Những ngày cuối trước khi Hải chết _[tạm, plot mới bỏ "ngày bỏ lại Phong"]_ |
 
 ## Hầu đồng
 
@@ -498,9 +499,10 @@ Code Day 1 (bản grid cũ): giữ UnitData, Commands và FSM của AI; bỏ Gri
 
 1. Giao diện màn dựng lại sự kiện ở True End: chốt khi làm full game, sau Vertical Slice.
 2. Nghi lễ cuối: plot nói lễ để phong ấn lại, nhưng kích hoạt thì phong ấn vỡ và quỷ thoát ra. Có phải nhóm cố ý mở phong ấn lúc nó yếu nhất để đánh, rồi mới đẩy về (Normal) hoặc diệt/giải thoát (True)?
-3. Lý do về làng của từng người (giọng nói, món đồ cũ, giấc mơ, lời nhắn, ký ức về Hải): ai nhận cái nào? v0.3 là về dự giỗ Hải.
+3. Lý do về làng của 4 người (Minh, Vy, Tuấn, Khoa; giọng nói, món đồ cũ, giấc mơ, lời nhắn, ký ức về Hải): ai nhận cái nào? v0.3 là về dự giỗ Hải.
 4. Vòng lặp 30 ngày chưa có trong plot mới: giữ lý do "thực thể nhốt làng để tận hưởng nỗi sợ"?
 5. "Điều tra làm phong ấn yếu đi" có thành cơ chế trong game (ví dụ một chỉ số phong ấn) hay chỉ là twist truyện?
 6. Năm việc trong nghi lễ cũ (đứng bờ sông, gọi tên Hải, giữ chuông, đọc lời khấn, phần cuối) đã thay bằng lời thừa nhận. Có giữ thêm phần hành động không?
 7. Phe ban đầu của Lan và Khoa đã đổi theo background mới (Lan: Lưỡng lự, Khoa: Không tin Phong). Gắn kết ban đầu tính theo phe nên cần chốt lại. Chi tiết cũ đã bỏ: Lan mang cơm cho Phong 10 năm, Phong cõng Lan về năm 8 tuổi, Phong hận cả nhóm.
-8. Đêm Hải chết, background ghi Phong "đứng đó rồi bỏ chạy", nhưng lời thừa nhận của Phong ở nghi lễ cuối là "Tao đã chạy theo nó". Chốt một bản.
+8. Phong không chơi được nhưng giờ là người thứ 6 của nghi lễ. Phong có thể từ chối phần của mình không, và theo trạng thái quan hệ nào?
+9. Plot mới bỏ sự kiện "nhóm bỏ lại Phong". Kỷ vật Ảnh chụp 7 người từng mở ký ức đó; đã đổi tạm sang "Những ngày cuối trước khi Hải chết", cần chốt.
